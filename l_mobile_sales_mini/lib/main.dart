@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'L-MobileSales Mini',
-      home: LMobileSalesMini(),
-    );
-  }
+  runApp(
+    ProviderScope(child: const LMobileSalesMini())
+  );
 }
 
 class LMobileSalesMini extends StatelessWidget {
@@ -20,7 +13,10 @@ class LMobileSalesMini extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MaterialApp(
+      title: 'L-MobileSales Mini',
+      home: LoginScreen(),
+    );
   }
 }
 
