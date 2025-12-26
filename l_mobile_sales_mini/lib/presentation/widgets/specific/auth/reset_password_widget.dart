@@ -109,7 +109,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16, color: Colors.black)),
+          Text(label, style: TextTheme.of(context).labelLarge),
           const SizedBox(height: 5),
           TextFormField(
             controller: controller,
@@ -167,10 +167,9 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
         onPressed: showSignIn,
         child: Text(
           'Return to login screen',
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.green
-          ),
+            style: TextTheme.of(context).bodyMedium?.copyWith(
+                color: Colors.green
+            )
         )
     );
   }

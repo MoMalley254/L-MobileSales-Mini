@@ -50,10 +50,7 @@ class QuickActionsWidget extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     return Text(
         'Quick Actions',
-        style: TextStyle(
-            fontSize: 14,
-            color: Colors.black26
-        )
+        style: TextTheme.of(context).labelMedium,
     );
   }
 
@@ -77,10 +74,7 @@ class QuickActionsWidget extends StatelessWidget {
             ),
             Text(
               'New Transaction',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black
-              ),
+              style: TextTheme.of(context).bodyMedium,
             ),
           ],
         ),
@@ -137,10 +131,7 @@ class QuickActionsWidget extends StatelessWidget {
             ),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold
-              ),
+              style: TextTheme.of(context).bodyLarge,
             )
           ],
         ),

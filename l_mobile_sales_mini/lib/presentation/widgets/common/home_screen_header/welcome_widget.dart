@@ -91,10 +91,7 @@ class WelcomeWidget extends StatelessWidget {
   Widget buildDate(BuildContext context, Map<String, String> dateMap) {
     return RichText(
         text: TextSpan(
-          style: TextStyle(
-              fontSize: 14,
-              color: Colors.black26
-          ),
+          style: TextTheme.of(context).labelMedium,
           children: [
             TextSpan(
               text: '${dateMap['day']}, ',
@@ -113,11 +110,7 @@ class WelcomeWidget extends StatelessWidget {
   Widget buildWelcomeText(BuildContext context, Map<String, String> dateMap) {
     return RichText(
         text: TextSpan(
-          style: TextStyle(
-              fontSize: 22,
-              color: Colors.black,
-              fontWeight: FontWeight.bold
-          ),
+          style: TextTheme.of(context).bodyLarge,
           children: [
             TextSpan(
               text: 'Good ',
@@ -135,11 +128,10 @@ class WelcomeWidget extends StatelessWidget {
       children: [
         Text(
           username,
-          style: TextStyle(
-            fontSize: 22,
+          style: TextTheme.of(context).bodyLarge?.copyWith(
             color: Colors.green,
-            fontWeight: FontWeight.bold
-          ),
+            fontSize: 20
+          )
         ),
         const SizedBox(width: 10,),
         getGreetingIcon(dateMap['period']!),

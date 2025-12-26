@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:l_mobile_sales_mini/core/theme/app_colors.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/appbar_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/bottom_navigation_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/home_screen_header/welcome_widget.dart';
@@ -23,7 +24,7 @@ class HomeScreen extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 1,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.grey[200]
+        color: Theme.of(context).colorScheme.primary
       ),
       child: SingleChildScrollView(
         child: Column(

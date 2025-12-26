@@ -24,15 +24,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.black12),
+      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.primary,),
       body: buildLoginBody(context),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.primary,
     );
   }
 
   Widget buildLoginBody(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.black12),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary,),
       child: Column(
         children: [
           buildLogo(context),
@@ -73,7 +73,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Icon(Icons.store, size: 60),
         Text(
           'Leysco Mobile Sales',
-          style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextTheme.of(context).bodyLarge,
         ),
       ],
     );
@@ -86,18 +86,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             TextSpan(
               text: 'Welcome Back, ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.black,
-              ),
+              style: TextTheme.of(context).bodyLarge
             ),
             TextSpan(
               text: 'please login to proceed',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
+              style: TextTheme.of(context).bodyMedium
             ),
           ],
         ),
@@ -112,18 +105,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               TextSpan(
                 text: 'Reset Password \n ',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.black,
-                ),
+                style: TextTheme.of(context).bodyLarge
               ),
               TextSpan(
                 text: 'Enter your username and registered email address to receive password reset instructions',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
+                style: TextTheme.of(context).bodyMedium
               ),
             ],
           ),

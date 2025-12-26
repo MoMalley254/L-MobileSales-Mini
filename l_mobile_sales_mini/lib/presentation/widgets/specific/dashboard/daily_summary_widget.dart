@@ -98,10 +98,7 @@ class DailySummaryWidget extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     return Text(
       'Daily Revenue',
-        style: TextStyle(
-            fontSize: 14,
-            color: Colors.black26
-        )
+      style: TextTheme.of(context).labelMedium,
     );
   }
 
@@ -126,31 +123,22 @@ class DailySummaryWidget extends StatelessWidget {
   Widget buildRevenueNumbers(BuildContext context, double sales) {
     return RichText(
         text: TextSpan(
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.black26
-          ),
+          style: TextTheme.of(context).labelMedium,
           children: [
             TextSpan(
                 text: 'Goal '
             ),
             TextSpan(
                 text: '${dailyTarget.toString()}\n',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black
-                )
+                style: TextTheme.of(context).bodyMedium,
             ),
             TextSpan(
                 text: 'Ksh. '
             ),
             TextSpan(
               text: '${sales.toStringAsFixed(2)} ',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
+              style: TextTheme.of(context).bodyLarge?.copyWith(
+                color: Colors.green
               )
             ),
           ],
@@ -173,19 +161,14 @@ class DailySummaryWidget extends StatelessWidget {
             children: [
               Text(
                 '${(progressPercent * 100).toStringAsFixed(1)}% Achieved',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                style: TextTheme.of(context).labelMedium?.copyWith(
                   color: Colors.green
                 ),
               ),
 
               Text(
                 'Ksh. ${remainingAmount.toStringAsFixed(1)} remaining',
-                style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black26
-                ),
+                style: TextTheme.of(context).labelMedium,
               ),
             ],
           ),

@@ -21,7 +21,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.primary,
       elevation: 0,
       leading: buildMenuIcon(context),
       actions: [
@@ -69,14 +69,13 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
                 minWidth: 16,
                 minHeight: 16,
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   '3',
-                  style: TextStyle(
-                    fontSize: 10,
+                  style: TextTheme.of(context).labelMedium?.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                    fontWeight: FontWeight.bold
+                  )
                 ),
               ),
             ),

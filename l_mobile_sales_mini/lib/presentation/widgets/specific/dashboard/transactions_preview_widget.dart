@@ -117,10 +117,7 @@ class TransactionsPreviewWidget extends StatelessWidget {
   Widget buildTitle(BuildContext context) {
     return Text(
         'Daily Revenue',
-        style: TextStyle(
-            fontSize: 14,
-            color: Colors.black26
-        )
+        style: TextTheme.of(context).labelMedium,
     );
   }
 
@@ -129,9 +126,8 @@ class TransactionsPreviewWidget extends StatelessWidget {
         onPressed: showAllTransaction,
         child: Text(
             'View All',
-            style: TextStyle(
-                fontSize: 14,
-                color: Colors.green
+            style: TextTheme.of(context).labelMedium?.copyWith(
+              color: Colors.green
             )
         )
     );
@@ -202,18 +198,13 @@ class TransactionsPreviewWidget extends StatelessWidget {
       children: [
         Text(
           '${isOrder ? 'Order' : 'Return'} #$id',
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
+          style: TextTheme.of(context).bodyMedium?.copyWith(
             fontWeight: FontWeight.bold
           ),
         ),
         Text(
           getElapsedTime(time),
-          style: TextStyle(
-              color: Colors.black26,
-              fontSize: 14
-          ),
+          style: TextTheme.of(context).labelMedium
         )
       ],
     );
@@ -222,11 +213,10 @@ class TransactionsPreviewWidget extends StatelessWidget {
   Widget buildTransactionTotals(BuildContext context, double price, bool isOrder) {
     return Text(
       '${isOrder ? '+' : '-'} Ksh.${price.toStringAsFixed(2)}',
-      style: TextStyle(
+      style: TextTheme.of(context).bodyMedium?.copyWith(
         color: isOrder ? Colors.green : Colors.red,
-        fontSize: 16,
-        fontWeight: FontWeight.bold
-      ),
+          fontWeight: FontWeight.bold
+      )
     );
   }
 }

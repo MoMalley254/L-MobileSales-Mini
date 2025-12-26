@@ -6,7 +6,7 @@ class BottomNavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.primary,
       type: BottomNavigationBarType.fixed,
       selectedFontSize: 16,
       fixedColor: Colors.green,

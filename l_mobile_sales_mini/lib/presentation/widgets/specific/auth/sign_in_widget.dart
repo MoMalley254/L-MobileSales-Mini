@@ -77,11 +77,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             children: [
               Text(
                 'Sign In',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextTheme.of(context).bodyLarge
               ),
               buildUsernameSect(context, authNotifier),
               const SizedBox(height: 15),
@@ -136,7 +132,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 16, color: Colors.black)),
+          Text(label, style: TextTheme.of(context).labelLarge),
           const SizedBox(height: 5),
           TextFormField(
             controller: controller,
@@ -206,10 +202,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
                 const SizedBox(width: 10,),
                 Text(
                     'Remember Me',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black
-                    )
+                    style: TextTheme.of(context).bodyMedium
                 )
               ],
             ),
@@ -219,10 +212,9 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             onPressed: showPasswordReset,
             child: Text(
               'Forgot Password?',
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.green
-              ),
+              style: TextTheme.of(context).bodyMedium?.copyWith(
+                color: Colors.green
+              )
             )
         )
       ],
