@@ -18,18 +18,19 @@ GoRouter createAppRouter(WidgetRef ref) {
       initialLocation: RouteNames.splashRoute,
       redirect: (context, state) {
         final authState = ref.watch(authProviderNotifier);
+        final isSignedIn = authState.asData?.value.isAuthenticated ?? false;
 
+        final isSplash = state.matchedLocation == RouteNames.splashRoute;
+        final isLogin = state.matchedLocation == RouteNames.loginRoute;
+
+        // Wait until auth state is loaded
         if (authState.isLoading) return null;
 
-        final bool isSignedIn = authState.asData?.value.isAuthenticated ?? false;
-
-        final isAuthScreen = state.uri.toString().startsWith('/login');
-
-        if (!isSignedIn && isAuthScreen) {
-          return RouteNames.loginRoute;
+        if (!isSignedIn) {
+          return isLogin ? null : RouteNames.loginRoute;
         }
 
-        if (!isSignedIn && !isAuthScreen) {
+        if (isSignedIn && (isLogin || isSplash)) {
           return RouteNames.dashboardRoute;
         }
 
@@ -37,7 +38,7 @@ GoRouter createAppRouter(WidgetRef ref) {
       },
       routes: [
         GoRoute(
-          path: RouteNames.loginRoute,
+          path: RouteNames.splashRoute,
           name: 'Splash',
           builder: (context, state) => const SplashScreen(),
         ),

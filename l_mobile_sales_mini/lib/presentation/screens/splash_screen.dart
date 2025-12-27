@@ -13,18 +13,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  Future<void> _checkAuth() async {
-    final authNotifier = ref.read(authProviderNotifier.notifier);
-
-    final auth = await authNotifier.build();
-
-    if (auth.isAuthenticated) {
-      GoRouter.of(context).go(RouteNames.dashboardRoute);
-    } else {
-      GoRouter.of(context).go(RouteNames.loginRoute);
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -32,7 +20,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _checkAuth();
     return Scaffold(
       appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.primary,),
       body: Container(

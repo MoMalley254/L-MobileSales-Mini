@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/navigation/route_names.dart';
 
 class QuickActionsWidget extends StatelessWidget {
   const QuickActionsWidget({super.key});
 
   void goToInventory() {
-    print('Go to inventory');
+
   }
 
   void goToCustomers() {
@@ -94,7 +97,7 @@ class QuickActionsWidget extends StatelessWidget {
             context,
             'Inventory',
             Icons.inventory,
-            goToInventory
+            () => GoRouter.of(context).go(RouteNames.inventoryRoute)
         ),
         buildContainerButton(
             context,
