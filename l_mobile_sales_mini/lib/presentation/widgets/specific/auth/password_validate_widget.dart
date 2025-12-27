@@ -9,25 +9,25 @@ class PasswordValidateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final passwordProvider = ref.watch(authProviderNotifier);
+    final passwordProvider = ref.watch(authProviderNotifier).value;
     return Wrap(
       runSpacing: 20.0,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         _buildRequirement(
-            passwordProvider.hasMinLength,
+            passwordProvider?.hasMinLength ?? false,
             '8+ Characters'
         ),
         _buildRequirement(
-            passwordProvider.hasUppercaseLetter,
+            passwordProvider?.hasUppercaseLetter ?? false,
             '1 Uppercase letter'
         ),
         _buildRequirement(
-            passwordProvider.hasANumber,
+            passwordProvider?.hasANumber ?? false,
             '1 Number'
         ),
         _buildRequirement(
-            passwordProvider.hasASpecialCharacter,
+            passwordProvider?.hasASpecialCharacter ?? false,
             '1 Special Character'
         ),
       ],

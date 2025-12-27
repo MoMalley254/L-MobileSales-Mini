@@ -1,0 +1,89 @@
+[
+  {
+    "id": "USR-001",
+    "username": "LEYS-1001",
+    "password": "Password)1",
+    "employee_id": "EMP-001",
+    "first_name": "David",
+    "last_name": "Kariuki",
+    "email": "david.kariuki@leysco.co.ke",
+    "phone": "+254-722-123456",
+    "role": "Sales Manager",
+    "department": "Sales",
+    "permissions": [
+      "view_sales",
+      "create_sales",
+      "approve_sales",
+      "view_reports",
+      "view_customers",
+      "create_customers",
+      "view_inventory",
+      "view_pricing"
+    ],
+    "approval_limit": 1000000.00,
+    "region": "Central",
+    "last_login": "2025-04-23T14:30:45",
+    "status": "Active",
+    "two_factor_enabled": true,
+    "created_date": "2018-05-10",
+    "profile_image": "david_kariuki.jpg",
+    "preferences": {
+      "language": "en",
+      "theme": "light",
+      "notifications": {
+        "email": true,
+        "sms": true,
+        "push": true
+      },
+      "dashboard_widgets": [
+        "sales_summary",
+        "pending_approvals",
+        "inventory_alerts",
+        "top_customers"
+
+      ]
+    }
+  },
+  {
+    "id": "USR-002",
+    "username": "LEYS-1002",
+    "password": "another_password",
+    "employee_id": "EMP-002",
+    "first_name": "Jane",
+    "last_name": "Njoki",
+    "email": "jane.njoki@leysco.co.ke",
+    "phone": "+254-733-234567",
+    "role": "Senior Sales Representative",
+    "department": "Sales",
+    "permissions": [
+      "view_sales",
+      "create_sales",
+      "view_customers",
+      "create_customers",
+      "view_inventory",
+      "view_pricing"
+    ],
+    "approval_limit": 250000.00,
+    "region": "Central",
+    "last_login": "2025-04-23T09:15:20",
+    "status": "Active",
+    "two_factor_enabled": true,
+    "created_date": "2019-02-15",
+    "profile_image": "jane_njoki.jpg",
+    "preferences": {
+      "language": "en",
+      "theme": "light",
+      "notifications": {
+        "email": true,
+        "sms": true,
+        "push": false
+      },
+      "dashboard_widgets": [
+        "sales_summary",
+        "customer_visits",
+        "inventory_status",
+        "recent_orders"
+      ]
+    }
+  }
+]

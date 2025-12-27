@@ -175,7 +175,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
   }
 
   Widget buildResetPasswordButton(BuildContext context) {
-    final bool hasEverything = ref.watch(authProviderNotifier).validForPasswordReset;
+    final bool hasEverything = ref.watch(authProviderNotifier).value?.validForPasswordReset ?? false;
 
     return InkWell(
       onTap: () {

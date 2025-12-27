@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:l_mobile_sales_mini/core/navigation/route_names.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/auth/password_validate_widget.dart';
 
+import '../../../../data/models/auth_model.dart';
 import '../../../controllers/auth_provider.dart';
 
 class SignInWidget extends ConsumerStatefulWidget {
@@ -16,6 +19,8 @@ class SignInWidget extends ConsumerStatefulWidget {
 }
 
 class _SignInWidgetState extends ConsumerState<SignInWidget> {
+  bool isLoading = false;
+
   bool hidePassword = true;
   bool rememberMe = false;
   final GlobalKey<FormState> _signInFormKey = GlobalKey();
@@ -38,9 +43,14 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
     widget.updateActiveWidget(false);
   }
 
-  void doLogin() {
+  Future<void> doLogin() async{
+    setState(() {
+      isLoading = true;
+    });
+
     if(_signInFormKey.currentState!.validate()) {
-      print('Do login');
+      final authProvider = ref.read(authProviderNotifier.notifier);
+      await authProvider.login(_usernameController.text, _passwordController.text, rememberMe);
     }
   }
 
@@ -58,6 +68,28 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<AuthModel>>(authProviderNotifier, (previous, next) {
+      next.when(
+        data: (user) {
+          final authState = ref.read(authProviderNotifier).value?.isAuthenticated ?? false;
+          if (authState) {
+            if (context.mounted) {
+              context.go(RouteNames.dashboardRoute);
+            }
+          }
+        },
+        error: (error, stack) {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(error.toString())),
+          );
+        },
+        loading: () {},
+      );
+    });
+
     return buildFormSection(context);
   }
 
@@ -147,9 +179,9 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             },
             onChanged: (value) {
               if(isPassword) {
-                authNotifier.validatePassword(value);
+                ref.read(authProviderNotifier.notifier).validatePassword(value);
               } else {
-                authNotifier.updateUsername(value);
+                ref.read(authProviderNotifier.notifier).updateUsername(value);
               }
             },
             decoration: InputDecoration(
@@ -222,7 +254,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
   }
 
   Widget buildLoginButton(BuildContext context) {
-    final bool hasEverything = ref.watch(authProviderNotifier).allInputsProvided;
+    final bool hasEverything = ref.watch(authProviderNotifier).value?.allInputsProvided ?? false;
 
     return InkWell(
       onTap: () {
@@ -239,7 +271,9 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             color: hasEverything ? Colors.blueAccent : Colors.grey[400],
             borderRadius: BorderRadius.circular(30)
         ),
-        child: Text(
+        child: isLoading ? const Center(
+          child: CircularProgressIndicator(color: Colors.green),
+        ) : Text(
           'Log In',
           style: TextStyle(
               fontSize: 20,

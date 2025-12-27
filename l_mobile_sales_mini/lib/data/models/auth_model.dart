@@ -1,3 +1,5 @@
+import 'package:l_mobile_sales_mini/data/models/user/user_model.dart';
+
 class AuthModel {
   final String username;
   final String email;
@@ -6,6 +8,8 @@ class AuthModel {
   final bool hasUppercaseLetter;
   final bool hasANumber;
   final bool hasASpecialCharacter;
+  final User? userData;
+  final String? error;
 
   const AuthModel({
     this.username = '',
@@ -15,6 +19,8 @@ class AuthModel {
     this.hasUppercaseLetter = false,
     this.hasANumber = false,
     this.hasASpecialCharacter = false,
+    this.userData,
+    this.error
   });
 
   bool get passwordValid =>
@@ -24,6 +30,8 @@ class AuthModel {
 
   bool get validForPasswordReset => username.isNotEmpty && email.isNotEmpty;
 
+  bool get isAuthenticated => userData != null;
+
   AuthModel copyWith({
     String? username,
     String? email,
@@ -32,6 +40,8 @@ class AuthModel {
     bool? hasUppercaseLetter,
     bool? hasANumber,
     bool? hasASpecialCharacter,
+    User? userData,
+    String? error
   }) {
     return AuthModel(
       username: username ?? this.username,
@@ -41,6 +51,8 @@ class AuthModel {
       hasUppercaseLetter: hasUppercaseLetter ?? this.hasUppercaseLetter,
       hasANumber: hasANumber ?? this.hasANumber,
       hasASpecialCharacter: hasASpecialCharacter ?? this.hasASpecialCharacter,
+      userData: userData ?? this.userData,
+      error: error ?? this.error,
     );
   }
 }
