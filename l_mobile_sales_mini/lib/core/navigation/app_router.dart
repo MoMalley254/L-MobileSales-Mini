@@ -8,13 +8,14 @@ import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/splash_screen.dart';
 
 import '../../presentation/widgets/common/appbar_widget.dart';
 import '../../presentation/widgets/common/bottom_navigation_widget.dart';
 
 GoRouter createAppRouter(WidgetRef ref) {
   return GoRouter(
-      initialLocation: RouteNames.loginRoute,
+      initialLocation: RouteNames.splashRoute,
       redirect: (context, state) {
         final authState = ref.watch(authProviderNotifier);
 
@@ -35,6 +36,12 @@ GoRouter createAppRouter(WidgetRef ref) {
         return null;
       },
       routes: [
+        GoRoute(
+          path: RouteNames.loginRoute,
+          name: 'Splash',
+          builder: (context, state) => const SplashScreen(),
+        ),
+
         GoRoute(
           path: RouteNames.loginRoute,
           name: 'Login',
