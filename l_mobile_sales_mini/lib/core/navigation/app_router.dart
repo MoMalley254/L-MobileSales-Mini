@@ -40,10 +40,18 @@ GoRouter createAppRouter(WidgetRef ref) {
 
         ShellRoute(
             builder: (context, state, child) {
+              int currentIndex = 0;
+              if (state.uri.toString().startsWith(RouteNames.inventoryRoute)) {
+                currentIndex = 2;
+              } else if (state.uri.toString().startsWith('/statistics')) {
+                currentIndex = 1;
+              } else if (state.uri.toString().startsWith('/settings')) {
+                currentIndex = 3;
+              }
               return Scaffold(
                 appBar: AppbarWidget(),
                 body: child,
-                bottomNavigationBar: BottomNavigationWidget(),
+                bottomNavigationBar: BottomNavigationWidget(currentIndex: currentIndex),
               );
             },
             routes: [
