@@ -4,6 +4,7 @@ import 'package:l_mobile_sales_mini/core/theme/app_theme.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
 
 void main() {
   runApp(
@@ -18,7 +19,7 @@ class LMobileSalesMini extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'L-MobileSales Mini',
-      home: InventoryScreen(),
+      home: ProductScreen(),
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
