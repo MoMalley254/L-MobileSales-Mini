@@ -16,7 +16,10 @@ GoRouter createAppRouter(WidgetRef ref) {
   return GoRouter(
       initialLocation: RouteNames.loginRoute,
       redirect: (context, state) {
-        final authState = ref.read(authProviderNotifier);
+        final authState = ref.watch(authProviderNotifier);
+
+        if (authState.isLoading) return null;
+
         final bool isSignedIn = authState.asData?.value.isAuthenticated ?? false;
 
         final isAuthScreen = state.uri.toString().startsWith('/login');

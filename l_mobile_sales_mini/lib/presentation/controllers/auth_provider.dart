@@ -18,7 +18,33 @@ class AuthNotifier extends AsyncNotifier<AuthModel> {
 
   @override
   Future<AuthModel> build() async {
-    return AuthModel();
+    final String? savedUserId = await _secureStorage.read(key: 'auth_key');
+    if (savedUserId != null && savedUserId.isNotEmpty) {
+      return getUserDataFromSaved(savedUserId);
+    } else {
+      return AuthModel();
+    }
+  }
+
+  Future<AuthModel> getUserDataFromSaved(String userId) async {
+    final data = await ref.read(appDataAsyncProvider.future);
+
+    final users = data.users;
+    final user = users.firstWhereOrNull((u) => u.id == userId);
+    if (user != null) {
+      return AuthModel(
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        hasMinLength: true,
+        hasUppercaseLetter: true,
+        hasANumber: true,
+        hasASpecialCharacter: true,
+        userData: user,
+      );
+    } else {
+      return AuthModel();
+    }
   }
 
   void validatePassword(String password) {
