@@ -123,11 +123,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppbarWidget(),
-      body: buildProductBody(context),
-      bottomNavigationBar: BottomNavigationWidget(),
-    );
+    return buildProductBody(context);
   }
 
   Widget buildProductBody(BuildContext context) {

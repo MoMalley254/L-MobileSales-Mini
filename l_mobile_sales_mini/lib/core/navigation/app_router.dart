@@ -9,6 +9,9 @@ import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
 
+import '../../presentation/widgets/common/appbar_widget.dart';
+import '../../presentation/widgets/common/bottom_navigation_widget.dart';
+
 GoRouter createAppRouter(WidgetRef ref) {
   return GoRouter(
       initialLocation: RouteNames.loginRoute,
@@ -38,7 +41,9 @@ GoRouter createAppRouter(WidgetRef ref) {
         ShellRoute(
             builder: (context, state, child) {
               return Scaffold(
+                appBar: AppbarWidget(),
                 body: child,
+                bottomNavigationBar: BottomNavigationWidget(),
               );
             },
             routes: [

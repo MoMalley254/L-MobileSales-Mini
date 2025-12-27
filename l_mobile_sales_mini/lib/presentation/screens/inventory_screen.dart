@@ -139,11 +139,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppbarWidget(),
-      body: buildInventoryBody(context),
-      bottomNavigationBar: BottomNavigationWidget(),
-    );
+    return buildInventoryBody(context);
   }
 
   Widget buildInventoryBody(BuildContext context) {
