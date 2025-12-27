@@ -1,0 +1,59 @@
+[
+  {
+    "id": "PRD-001",
+    "name": "SuperFuel Max 20W-50",
+    "sku": "SF-MAX-20W50",
+    "category": "Engine Oils",
+    "subcategory": "Mineral Oils",
+    "description": "High-performance mineral oil for heavy-duty engines",
+
+    "price": 4500.00,
+    "tax_rate": 16.0,
+    "stock": [
+      {"warehouse_id": "WH-001", "quantity": 150, "reserved": 20},
+      {"warehouse_id": "WH-002", "quantity": 85, "reserved": 5}
+    ],
+    "unit": "Liter",
+    "packaging": "5L Container",
+    "min_order_quantity": 1,
+    "reorder_level": 30,
+    "batch_number": true,
+    "serial_number": false,
+    "images": ["sf_max_20w50_front.jpg", "sf_max_20w50_back.jpg"],
+    "specifications": {
+      "viscosity": "20W-50",
+      "base_type": "Mineral",
+      "volume": 5,
+      "application": "Heavy-duty diesel engines"
+    },
+    "related_products": ["PRD-002", "PRD-005"]
+  },
+  {
+    "id": "PRD-002",
+    "name": "EcoDrive Synthetic 5W-30",
+    "sku": "ED-SYN-5W30",
+    "category": "Engine Oils",
+    "subcategory": "Synthetic Oils",
+    "description": "Fully synthetic oil for modern passenger vehicles",
+    "price": 7200.00,
+    "tax_rate": 16.0,
+    "stock": [
+      {"warehouse_id": "WH-001", "quantity": 200, "reserved": 15},
+      {"warehouse_id": "WH-002", "quantity": 120, "reserved": 0}
+    ],
+    "unit": "Liter",
+    "packaging": "4L Container",
+    "min_order_quantity": 1,
+    "reorder_level": 40,
+    "batch_number": true,
+    "serial_number": false,
+    "images": ["ed_syn_5w30_front.jpg", "ed_syn_5w30_back.jpg"],
+    "specifications": {
+      "viscosity": "5W-30",
+      "base_type": "Synthetic",
+      "volume": 4,
+      "application": "Modern gasoline and diesel engines"
+    },
+    "related_products": ["PRD-001", "PRD-003"]
+  }
+]

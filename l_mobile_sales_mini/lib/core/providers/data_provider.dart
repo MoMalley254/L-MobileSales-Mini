@@ -16,7 +16,8 @@ class AppDataNotifier extends AsyncNotifier<AppDataState> {
     await repo.loadData();
 
     return AppDataState(
-      users: repo.users
+      users: repo.users,
+      products: repo.products
     );
   }
 
@@ -29,7 +30,8 @@ class AppDataNotifier extends AsyncNotifier<AppDataState> {
 
       state = AsyncData(
         state.asData?.value.copyWith(
-          users: repo.users
+          users: repo.users,
+          products: repo.products,
         ) ?? AppDataState.initial(),
       );
 
