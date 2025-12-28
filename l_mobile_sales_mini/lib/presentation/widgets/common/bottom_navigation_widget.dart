@@ -22,7 +22,7 @@ class BottomNavigationWidget extends StatelessWidget {
             GoRouter.of(context).go(RouteNames.dashboardRoute);
             break;
           case 1:
-            GoRouter.of(context).go('/statistics');
+            GoRouter.of(context).go(RouteNames.customersRoute);
             break;
           case 2:
             GoRouter.of(context).go(RouteNames.inventoryRoute);
@@ -41,10 +41,10 @@ class BottomNavigationWidget extends StatelessWidget {
           ),
         ),
         BottomNavigationBarItem(
-          label: 'Statistics',
-          tooltip: 'Statistics',
+          label: 'Customers',
+          tooltip: 'Customers',
           icon: Icon(
-              Icons.trending_up
+              Icons.people
           ),
         ),
         BottomNavigationBarItem(

@@ -4,4 +4,5 @@ class RouteNames {
   static const dashboardRoute = '/dashboard';
   static const inventoryRoute = '/products';
   static const productRoute = '/products/:id';
+  static const customersRoute = '/customers';
 }

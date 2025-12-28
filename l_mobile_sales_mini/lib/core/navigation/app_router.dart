@@ -9,6 +9,7 @@ import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/splash_screen.dart';
 
+import '../../presentation/screens/customers_screen.dart';
 import '../../presentation/widgets/common/appbar_widget.dart';
 import '../../presentation/widgets/common/bottom_navigation_widget.dart';
 
@@ -55,7 +56,7 @@ GoRouter createAppRouter(WidgetRef ref) {
               int currentIndex = 0;
               if (state.uri.toString().startsWith(RouteNames.inventoryRoute)) {
                 currentIndex = 2;
-              } else if (state.uri.toString().startsWith('/statistics')) {
+              } else if (state.uri.toString().startsWith(RouteNames.customersRoute)) {
                 currentIndex = 1;
               } else if (state.uri.toString().startsWith('/settings')) {
                 currentIndex = 3;
@@ -96,6 +97,11 @@ GoRouter createAppRouter(WidgetRef ref) {
                     )
                   ]
               ),
+              GoRoute(
+                path: RouteNames.customersRoute,
+                name: 'Customers',
+                builder: (context, state) => const CustomersScreen(),
+              )
             ]
         )
       ]
