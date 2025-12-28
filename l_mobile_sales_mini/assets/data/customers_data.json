@@ -1,0 +1,64 @@
+[
+  {
+    "id": "CUS-001",
+
+    "name": "Quick Auto Services Ltd",
+    "type": "Garage",
+    "category": "A",
+    "contact_person": "John Mwangi",
+    "phone": "+254-712-345678",
+    "email": "info@quickautoservices.co.ke",
+    "physical_address": {
+      "street": "Mombasa Road",
+      "building": "Auto Plaza Building",
+      "city": "Nairobi",
+      "region": "Nairobi County",
+      "postal_code": "00100"
+    },
+    "location": {
+      "latitude": -1.319370,
+      "longitude": 36.824120
+    },
+    "tax_id": "P051234567Q",
+    "payment_terms": "30 days",
+    "credit_limit": 500000.00,
+    "current_balance": 120000.00,
+    "territory": "Nairobi Central",
+    "sales_person": "EMP-005",
+    "notes": "Key account, receives monthly visits",
+    "created_date": "2019-05-12",
+    "last_order_date": "2025-04-01",
+    "order_frequency": "Monthly"
+  },
+  {
+    "id": "CUS-002",
+    "name": "Premium Motors Kenya",
+    "type": "Dealership",
+    "category": "A+",
+    "contact_person": "Sarah Wanjiku",
+    "phone": "+254-722-678901",
+    "email": "sarah.w@premiummotors.co.ke",
+    "physical_address": {
+      "street": "Uhuru Highway",
+      "building": "Premium Towers",
+      "city": "Nairobi",
+      "region": "Nairobi County",
+      "postal_code": "00100"
+    },
+    "location": {
+      "latitude": -1.292066,
+      "longitude": 36.821946
+    },
+    "tax_id": "P051345678R",
+    "payment_terms": "45 days",
+    "credit_limit": 1000000.00,
+    "current_balance": 450000.00,
+    "territory": "Nairobi Central",
+    "sales_person": "EMP-002",
+    "notes": "VIP customer, requires executive handling",
+    "created_date": "2018-08-23",
+    "last_order_date": "2025-03-28",
+    "order_frequency": "Bi-weekly"
+
+  }
+]
