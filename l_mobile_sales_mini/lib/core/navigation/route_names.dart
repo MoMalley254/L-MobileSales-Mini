@@ -5,4 +5,5 @@ class RouteNames {
   static const inventoryRoute = '/products';
   static const productRoute = '/products/:id';
   static const customersRoute = '/customers';
+  static const cartRoute = '/cart';
 }
