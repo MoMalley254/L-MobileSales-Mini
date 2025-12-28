@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l_mobile_sales_mini/core/navigation/route_names.dart';
-import 'package:l_mobile_sales_mini/data/models/auth_model.dart';
 import 'package:l_mobile_sales_mini/presentation/controllers/auth_provider.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
@@ -14,16 +13,18 @@ import '../../presentation/widgets/common/appbar_widget.dart';
 import '../../presentation/widgets/common/bottom_navigation_widget.dart';
 
 GoRouter createAppRouter(WidgetRef ref) {
+  final authNotifier = ref.read(authProviderNotifier.notifier);
+
   return GoRouter(
       initialLocation: RouteNames.splashRoute,
+      refreshListenable: authNotifier.authStateChanges,
       redirect: (context, state) {
-        final authState = ref.watch(authProviderNotifier);
+        final authState = ref.read(authProviderNotifier);
         final isSignedIn = authState.asData?.value.isAuthenticated ?? false;
 
         final isSplash = state.matchedLocation == RouteNames.splashRoute;
         final isLogin = state.matchedLocation == RouteNames.loginRoute;
 
-        // Wait until auth state is loaded
         if (authState.isLoading) return null;
 
         if (!isSignedIn) {

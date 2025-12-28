@@ -19,8 +19,6 @@ class SignInWidget extends ConsumerStatefulWidget {
 }
 
 class _SignInWidgetState extends ConsumerState<SignInWidget> {
-  bool isLoading = false;
-
   bool hidePassword = true;
   bool rememberMe = false;
   final GlobalKey<FormState> _signInFormKey = GlobalKey();
@@ -44,9 +42,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
   }
 
   Future<void> doLogin() async{
-    setState(() {
-      isLoading = true;
-    });
+    if (ref.read(authProviderNotifier).isLoading) return;
 
     if(_signInFormKey.currentState!.validate()) {
       final authProvider = ref.read(authProviderNotifier.notifier);
@@ -79,9 +75,6 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
           }
         },
         error: (error, stack) {
-          setState(() {
-            isLoading = false;
-          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(error.toString())),
           );
@@ -94,7 +87,6 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
   }
 
   Widget buildFormSection(BuildContext context) {
-    final authNotifier = ref.read(authProviderNotifier.notifier);
     return Form(
       key: _signInFormKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -109,17 +101,51 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             children: [
               Text(
                 'Sign In',
-                style: TextTheme.of(context).bodyLarge
+                style: Theme.of(context).textTheme.bodyLarge
               ),
-              buildUsernameSect(context, authNotifier),
+              buildUsernameSect(context),
               const SizedBox(height: 15),
-              buildPasswordSect(context, authNotifier),
+              buildPasswordSect(context),
               const SizedBox(height: 10,),
               buildPasswordValidation(context),
               const SizedBox(height: 15,),
               buildExtraButtons(context),
               const SizedBox(height: 15,),
-              buildLoginButton(context),
+              Consumer(
+                builder: (context, ref, child) {
+                  final authState = ref.watch(authProviderNotifier);
+                  final bool hasEverything = authState.value?.allInputsProvided ?? false;
+
+                  return InkWell(
+                    onTap: () {
+                      if (hasEverything) {
+                        doLogin();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: hasEverything ? Colors.blueAccent : Colors.grey[400],
+                          borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: authState.isLoading ? const Center(
+                        child: CircularProgressIndicator(color: Colors.green),
+                      ) : Text(
+                        'Log In',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 15,),
             ],
           ),
@@ -128,26 +154,24 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
     );
   }
 
-  Widget buildUsernameSect(BuildContext context, AuthNotifier authNotifier) {
+  Widget buildUsernameSect(BuildContext context) {
     return buildFormField(
         context,
         'Username',
         'Enter your username',
         _usernameController,
-        false,
-        authNotifier
+        false
     );
   }
 
-  Widget buildPasswordSect(BuildContext context, AuthNotifier authNotifier) {
+  Widget buildPasswordSect(BuildContext context) {
 
     return buildFormField(
         context,
         'Password',
         '**********',
         _passwordController,
-        true,
-        authNotifier
+        true
     );
   }
 
@@ -157,14 +181,13 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
       String hint,
       TextEditingController controller,
       bool isPassword,
-      AuthNotifier authNotifier
       ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextTheme.of(context).labelLarge),
+          Text(label, style: Theme.of(context).textTheme.labelLarge),
           const SizedBox(height: 5),
           TextFormField(
             controller: controller,
@@ -196,7 +219,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
               ),
               filled: true,
               fillColor: Colors.grey[400],
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: 15,
                 vertical: 20,
               ),
@@ -211,7 +234,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
     return Container(
         height: MediaQuery.of(context).size.height * .2,
         margin: const EdgeInsets.symmetric(horizontal: 10),
-        child: PasswordValidateWidget()
+        child: const PasswordValidateWidget()
     );
   }
 
@@ -234,7 +257,7 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
                 const SizedBox(width: 10,),
                 Text(
                     'Remember Me',
-                    style: TextTheme.of(context).bodyMedium
+                    style: Theme.of(context).textTheme.bodyMedium
                 )
               ],
             ),
@@ -244,45 +267,12 @@ class _SignInWidgetState extends ConsumerState<SignInWidget> {
             onPressed: showPasswordReset,
             child: Text(
               'Forgot Password?',
-              style: TextTheme.of(context).bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.green
               )
             )
         )
       ],
-    );
-  }
-
-  Widget buildLoginButton(BuildContext context) {
-    final bool hasEverything = ref.watch(authProviderNotifier).value?.allInputsProvided ?? false;
-
-    return InkWell(
-      onTap: () {
-        if (hasEverything) {
-          doLogin();
-        }
-      },
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 30),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-            color: hasEverything ? Colors.blueAccent : Colors.grey[400],
-            borderRadius: BorderRadius.circular(30)
-        ),
-        child: isLoading ? const Center(
-          child: CircularProgressIndicator(color: Colors.green),
-        ) : Text(
-          'Log In',
-          style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-              fontWeight: FontWeight.bold
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
     );
   }
 }

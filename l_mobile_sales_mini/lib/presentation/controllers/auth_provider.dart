@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:l_mobile_sales_mini/core/providers/data_provider.dart';
 import 'package:collection/collection.dart';
@@ -10,7 +12,8 @@ final authProviderNotifier = AsyncNotifierProvider<AuthNotifier, AuthModel>(
 );
 
 class AuthNotifier extends AsyncNotifier<AuthModel> {
-  final _secureStorage = FlutterSecureStorage();
+  final authStateChanges = ChangeNotifier();
+  final _secureStorage = const FlutterSecureStorage();
 
   static const int maxTries = 3;
   int _currentTry = 0;
@@ -18,12 +21,18 @@ class AuthNotifier extends AsyncNotifier<AuthModel> {
 
   @override
   Future<AuthModel> build() async {
-    final String? savedUserId = await _secureStorage.read(key: 'auth_key');
+    ref.onDispose(() {
+      authStateChanges.dispose();
+    });
+
+    final String? savedUserId = await _secureStorage.read(key: 'auth_token');
     if (savedUserId != null && savedUserId.isNotEmpty) {
-      return getUserDataFromSaved(savedUserId);
+      state = AsyncData(await getUserDataFromSaved(savedUserId));
     } else {
-      return AuthModel();
+      state = AsyncData(AuthModel());
     }
+    authStateChanges.notifyListeners();
+    return state.asData?.value ?? AuthModel();
   }
 
   Future<AuthModel> getUserDataFromSaved(String userId) async {
@@ -106,6 +115,7 @@ class AuthNotifier extends AsyncNotifier<AuthModel> {
       state = AsyncData(
         AuthModel(userData: user),
       );
+      authStateChanges.notifyListeners();
     } catch (e) {
       _currentTry++;
 
@@ -127,5 +137,6 @@ class AuthNotifier extends AsyncNotifier<AuthModel> {
   Future<void> logout() async {
     await _secureStorage.delete(key: 'auth_token');
     state = AsyncData(AuthModel());
+    authStateChanges.notifyListeners();
   }
 }
