@@ -48,3 +48,8 @@ flowchart TD
 
     W -->|No| B
     V -->|No| L
+
+
+Used serialized JSON run
+dart run build_runner build 
+ before building app to generate models.
