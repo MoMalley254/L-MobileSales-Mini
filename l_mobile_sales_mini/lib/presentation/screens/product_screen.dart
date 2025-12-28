@@ -56,7 +56,7 @@ class _ProductScreenState extends State<ProductScreen> {
       },
     ],
     'description':
-        'This premium item is crafted with attention to detail and built to last. Its sleek design and high-quality materials make it both functional and stylish, perfect for everyday use or special occasions.',
+    'This premium item is crafted with attention to detail and built to last. Its sleek design and high-quality materials make it both functional and stylish, perfect for everyday use or special occasions.',
   };
 
   int maxQty = 0;
@@ -66,7 +66,7 @@ class _ProductScreenState extends State<ProductScreen> {
   void hasSwipedImage() {
     setState(() {
       activeImagePath =
-          (product['images'] as List<String>)[_imagesController.page!.toInt()];
+      (product['images'] as List<String>)[_imagesController.page!.toInt()];
     });
   }
 
@@ -207,10 +207,10 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildSecondaryImages(
-    BuildContext context,
-    double maxHeight,
-    double maxWidth,
-  ) {
+      BuildContext context,
+      double maxHeight,
+      double maxWidth,
+      ) {
     List<String> productImages = product['images'] as List<String>;
     final double individualWidth = maxWidth / productImages.length;
     return Container(
@@ -235,11 +235,11 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildSecondaryImage(
-    BuildContext context,
-    String imagePath,
-    double individualWidth,
-    double maxHeight,
-  ) {
+      BuildContext context,
+      String imagePath,
+      double individualWidth,
+      double maxHeight,
+      ) {
     return InkWell(
       onTap: () => toggleActiveImage(imagePath),
       child: Opacity(
@@ -332,7 +332,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   Widget buildProductPrice(BuildContext context) {
     List<Map<String, dynamic>> prices =
-        (product['prices'] as List<Map<String, dynamic>>);
+    (product['prices'] as List<Map<String, dynamic>>);
 
     return Container(
       height: MediaQuery.of(context).size.height * .2,
@@ -365,9 +365,9 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildProductPriceDetails(
-    BuildContext context,
-    List<Map<String, dynamic>> prices,
-  ) {
+      BuildContext context,
+      List<Map<String, dynamic>> prices,
+      ) {
     final Map<String, dynamic> currentPriceMap = prices.first;
     double currentPrice = currentPriceMap.values.first;
 
@@ -403,10 +403,10 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildCurrentLastPricesComparison(
-    BuildContext context,
-    double currentPrice,
-    double immediatePreviousPrice,
-  ) {
+      BuildContext context,
+      double currentPrice,
+      double immediatePreviousPrice,
+      ) {
     double difference = currentPrice - immediatePreviousPrice;
     double percentage = 0;
 
@@ -443,9 +443,9 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildPriceTrend(
-    BuildContext context,
-    List<Map<String, dynamic>> prices,
-  ) {
+      BuildContext context,
+      List<Map<String, dynamic>> prices,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -457,9 +457,9 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildTrendGraph(
-    BuildContext context,
-    List<Map<String, dynamic>> prices,
-  ) {
+      BuildContext context,
+      List<Map<String, dynamic>> prices,
+      ) {
     if (prices.isEmpty) return Container();
 
     List<Map<String, dynamic>> reversedPrices = prices.reversed.toList();
@@ -520,7 +520,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextSpan(text: '$date \n Ksh.'),
                 TextSpan(
                   text:
-                      '${price.toStringAsFixed(2)}($symbol${change.toStringAsFixed(2)}%)',
+                  '${price.toStringAsFixed(2)}($symbol${change.toStringAsFixed(2)}%)',
                 ),
               ],
             ),

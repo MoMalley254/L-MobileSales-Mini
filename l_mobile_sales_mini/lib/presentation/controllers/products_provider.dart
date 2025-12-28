@@ -19,4 +19,8 @@ class ProductsNotifier extends AsyncNotifier<List<Product>> {
       return [];
     }
   }
+
+  Product? getProductFromId(String id) {
+    return state.value?.firstWhere((product) => product.id == id);
+  }
 }
