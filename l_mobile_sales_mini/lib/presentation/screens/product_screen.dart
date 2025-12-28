@@ -4,6 +4,7 @@ import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/produc
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_identification_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_price_trend_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_stores_widget.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/related_products_widget.dart';
 
 import '../../core/utils/inventory/stock_utils.dart';
 import '../../data/models/products/product_model.dart';
@@ -144,6 +145,8 @@ class _ProductScreenState extends ConsumerState<ProductScreen> {
             buildWarehouses(context, product.stock),
             const SizedBox(height: 20),
             ProductDescriptionWidget(productDescription: product.description),
+            const SizedBox(height: 20,),
+            RelatedProductsWidget(relatedProductsIds: product.relatedProducts),
             const SizedBox(height: 50),
           ],
         ),
