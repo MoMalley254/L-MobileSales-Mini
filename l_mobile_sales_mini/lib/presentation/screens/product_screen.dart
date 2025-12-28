@@ -1,63 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_description_widget.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_identification_widget.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_price_trend_widget.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/product/product_stores_widget.dart';
 
+import '../../core/utils/inventory/stock_utils.dart';
+import '../../data/models/products/product_model.dart';
+import '../controllers/products_provider.dart';
 import '../widgets/common/appbar_widget.dart';
 import '../widgets/common/bottom_navigation_widget.dart';
 
-class ProductScreen extends StatefulWidget {
-  const ProductScreen({super.key});
+class ProductScreen extends ConsumerStatefulWidget {
+  final String productId;
+  const ProductScreen({super.key, required this.productId});
 
   @override
-  State<ProductScreen> createState() => _ProductScreenState();
+  ConsumerState<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductScreenState extends ConsumerState<ProductScreen> {
   late String activeImagePath;
   final PageController _imagesController = PageController();
-  final Map<String, dynamic> product = {
-    'sku': 'QWERTYUIP',
-    'name': 'Sample Item',
-    'images': [
-      'https://picsum.photos/400/300?1',
-      'https://picsum.photos/400/300?2',
-      'https://picsum.photos/400/300?3',
-    ],
-    'categories': ['Electronics', 'Gadgets', 'Samsung', 'Gallium Nitride'],
-    'prices': [
-      {'25/12/2025': 3400.00},
-      {'18/11/2025': 3580.50},
-      {'02/10/2025': 3350.75},
-      {'15/07/2025': 3300.00},
-      {'20/03/2025': 3250.25},
-      {'10/12/2024': 3200.00},
-      {'05/06/2024': 3150.50},
-      {'12/01/2024': 3100.75},
-      {'28/09/2023': 3050.00},
-      {'14/04/2023': 3000.25},
-    ],
-    'stock': 12,
-    'stores': [
-      {
-        'name': 'Area 51',
-        'stock': 10,
-        'location': 'Mojave, Nevada',
-        'geoLocation': {'lat': 37.235, 'lng': -115.8111},
-      },
-      {
-        'name': 'Bermuda Triangle',
-        'stock': 7,
-        'location': 'North Atlantic Ocean',
-        'geoLocation': {'lat': 25.000, 'lng': -71.000},
-      },
-      {
-        'name': 'Chernobyl Exclusion Zone',
-        'stock': 0,
-        'location': 'Chernobyl, Ukraine',
-        'geoLocation': {'lat': 51.276, 'lng': 30.221},
-      },
-    ],
-    'description':
-    'This premium item is crafted with attention to detail and built to last. Its sleek design and high-quality materials make it both functional and stylish, perfect for everyday use or special occasions.',
-  };
+  final List<String> sampleImages = [
+    'https://picsum.photos/400/300?1',
+    'https://picsum.photos/400/300?2',
+    'https://picsum.photos/400/300?3',
+  ];
+  final List<Map<String, double>> samplePrices = [
+    {'25/12/2025': 3400.00},
+    {'18/11/2025': 3580.50},
+    {'02/10/2025': 3350.75},
+    {'15/07/2025': 3300.00},
+    {'20/03/2025': 3250.25},
+    {'10/12/2024': 3200.00},
+    {'05/06/2024': 3150.50},
+    {'12/01/2024': 3100.75},
+    {'28/09/2023': 3050.00},
+    {'14/04/2023': 3000.25},
+  ];
 
   int maxQty = 0;
   int cartQty = 0;
@@ -65,8 +46,8 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void hasSwipedImage() {
     setState(() {
-      activeImagePath =
-      (product['images'] as List<String>)[_imagesController.page!.toInt()];
+      // activeImagePath = product.images[_imagesController.page!.toInt()];
+      activeImagePath = sampleImages[_imagesController.page!.toInt()];
     });
   }
 
@@ -75,9 +56,10 @@ class _ProductScreenState extends State<ProductScreen> {
       activeImagePath = imagePath;
     });
 
-    final images = product['images'] as List<String>;
-    final pageIndex = images.indexWhere((img) => img == imagePath);
+    // final images = product.images;
+    // final pageIndex = images.indexWhere((img) => img == imagePath);
 
+    final pageIndex = sampleImages.indexWhere((img) => img == imagePath);
     if (pageIndex != -1) {
       _imagesController.jumpToPage(pageIndex);
     }
@@ -112,21 +94,38 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void initState() {
     super.initState();
-    activeImagePath = (product['images'] as List<String>).first;
     _imagesController.addListener(() {
       hasSwipedImage();
     });
-    maxQty = product['stock'] ?? 99;
-    cartQty = cartQty.clamp(0, maxQty);
     _cartQtyController.text = cartQty.toString();
   }
 
   @override
   Widget build(BuildContext context) {
-    return buildProductBody(context);
+    final productsAsync = ref.watch(productsProvider);
+    ref.listen<AsyncValue<List<Product>>>(productsProvider, (_, next) {
+      if (next.hasError) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error.toString())));
+      }
+    });
+
+    final allProducts = productsAsync.value ?? [];
+    final Product product = allProducts.firstWhere(
+      (p) => p.id == widget.productId,
+    );
+
+    //In production use actual images
+    // activeImagePath = item.images.first;
+    activeImagePath = sampleImages.first;
+
+    maxQty = getItemStockTotals(product.stock);
+    cartQty = cartQty.clamp(0, maxQty);
+    return buildProductBody(context, product);
   }
 
-  Widget buildProductBody(BuildContext context) {
+  Widget buildProductBody(BuildContext context, Product product) {
     return Container(
       height: MediaQuery.of(context).size.height * 1,
       width: double.infinity,
@@ -134,17 +133,17 @@ class _ProductScreenState extends State<ProductScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            buildProductImagesSection(context),
+            buildProductImagesSection(context, product.images),
             const SizedBox(height: 20),
-            buildProductIdentification(context),
+            ProductIdentificationWidget(product: product),
             const SizedBox(height: 20),
-            buildProductPrice(context),
+            buildProductPrice(context, product.price),
             const SizedBox(height: 20),
             buildAddToCart(context),
             const SizedBox(height: 20),
-            buildWarehouses(context),
+            buildWarehouses(context, product.stock),
             const SizedBox(height: 20),
-            buildDescription(context),
+            ProductDescriptionWidget(productDescription: product.description),
             const SizedBox(height: 50),
           ],
         ),
@@ -152,7 +151,10 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget buildProductImagesSection(BuildContext context) {
+  Widget buildProductImagesSection(
+    BuildContext context,
+    List<String> productImages,
+  ) {
     return Container(
       height: MediaQuery.of(context).size.height * .3,
       width: double.infinity,
@@ -178,12 +180,13 @@ class _ProductScreenState extends State<ProductScreen> {
           final double maxWidth = constraints.maxWidth;
           return Column(
             children: [
-              buildMainImage(context, mainImageContainerHeight),
+              buildMainImage(context, mainImageContainerHeight, productImages),
               const SizedBox(height: 10),
               buildSecondaryImages(
                 context,
                 secondaryImagesContainerHeight,
                 maxWidth,
+                productImages,
               ),
             ],
           );
@@ -192,40 +195,44 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget buildMainImage(BuildContext context, double maxHeight) {
-    List<String> productImages = product['images'] as List<String>;
+  Widget buildMainImage(
+    BuildContext context,
+    double maxHeight,
+    List<String> productImages,
+  ) {
     return SizedBox(
       height: maxHeight,
       child: PageView.builder(
         controller: _imagesController,
-        itemCount: productImages.length,
+        itemCount: sampleImages.length, //Use sample images for now
         itemBuilder: (context, index) {
-          return Image.network(productImages[index], fit: BoxFit.cover);
+          return Image.network(sampleImages[index], fit: BoxFit.cover);
         },
       ),
     );
   }
 
   Widget buildSecondaryImages(
-      BuildContext context,
-      double maxHeight,
-      double maxWidth,
-      ) {
-    List<String> productImages = product['images'] as List<String>;
-    final double individualWidth = maxWidth / productImages.length;
+    BuildContext context,
+    double maxHeight,
+    double maxWidth,
+    List<String> productImages,
+  ) {
+    final double individualWidth =
+        maxWidth / sampleImages.length; //Sample images
     return Container(
       height: maxHeight,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: productImages.length,
+        itemCount: sampleImages.length, //Sample images
         separatorBuilder: (BuildContext context, int index) {
           return const SizedBox(width: 5);
         },
         itemBuilder: (context, index) {
           return buildSecondaryImage(
             context,
-            productImages[index],
+            sampleImages[index], //Sample images
             individualWidth,
             maxHeight,
           );
@@ -235,11 +242,11 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildSecondaryImage(
-      BuildContext context,
-      String imagePath,
-      double individualWidth,
-      double maxHeight,
-      ) {
+    BuildContext context,
+    String imagePath,
+    double individualWidth,
+    double maxHeight,
+  ) {
     return InkWell(
       onTap: () => toggleActiveImage(imagePath),
       child: Opacity(
@@ -250,90 +257,17 @@ class _ProductScreenState extends State<ProductScreen> {
           child: Material(
             borderRadius: BorderRadius.circular(14),
             clipBehavior: Clip.antiAlias,
-            child: Image.network(imagePath, fit: BoxFit.cover),
+            child: Image.network(
+              imagePath,
+              fit: BoxFit.cover,
+            ), //Production use image.asset if saved locally
           ),
         ),
       ),
     );
   }
 
-  Widget buildProductIdentification(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildProductName(context),
-          const SizedBox(height: 5),
-          buildProductSKU(context),
-          const SizedBox(height: 5),
-          buildProductCategories(context),
-        ],
-      ),
-    );
-  }
-
-  Widget buildProductName(BuildContext context) {
-    return Text(product['name'], style: TextTheme.of(context).bodyLarge);
-  }
-
-  Widget buildProductSKU(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: TextTheme.of(context).labelMedium,
-        children: [
-          TextSpan(text: 'SKU: '),
-          TextSpan(
-            text: product['sku'],
-            style: TextTheme.of(
-              context,
-            ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildProductCategories(BuildContext context) {
-    final List<String> categories = product['categories'];
-    return SizedBox(
-      height: 30,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        separatorBuilder: (context, index) {
-          return const SizedBox(width: 10);
-        },
-        itemBuilder: (context, index) {
-          return buildProductCategory(context, categories[index]);
-        },
-      ),
-    );
-  }
-
-  Widget buildProductCategory(BuildContext context, String category) {
-    return InkWell(
-      onTap: () => navigateToCategory(category),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(7),
-        ),
-        child: Text(
-          category,
-          style: TextTheme.of(
-            context,
-          ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  Widget buildProductPrice(BuildContext context) {
-    List<Map<String, dynamic>> prices =
-    (product['prices'] as List<Map<String, dynamic>>);
-
+  Widget buildProductPrice(BuildContext context, double productPrice) {
     return Container(
       height: MediaQuery.of(context).size.height * .2,
       width: double.infinity,
@@ -355,23 +289,20 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
       child: Column(
         children: [
-          buildProductPriceDetails(context, prices),
+          buildProductPriceDetails(context, productPrice),
           const Spacer(),
-          buildPriceTrend(context, prices),
+          buildPriceTrend(context, productPrice),
           const Spacer(),
         ],
       ),
     );
   }
 
-  Widget buildProductPriceDetails(
-      BuildContext context,
-      List<Map<String, dynamic>> prices,
-      ) {
-    final Map<String, dynamic> currentPriceMap = prices.first;
-    double currentPrice = currentPriceMap.values.first;
+  Widget buildProductPriceDetails(BuildContext context, double productPrice) {
+    double currentPrice = productPrice;
 
-    final Map<String, dynamic> immediatePreviousPriceMap = prices[1];
+    final Map<String, dynamic> immediatePreviousPriceMap =
+        samplePrices[1]; //Sample prices
     double immediatePreviousPrice = immediatePreviousPriceMap.values.first;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -403,10 +334,10 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   Widget buildCurrentLastPricesComparison(
-      BuildContext context,
-      double currentPrice,
-      double immediatePreviousPrice,
-      ) {
+    BuildContext context,
+    double currentPrice,
+    double immediatePreviousPrice,
+  ) {
     double difference = currentPrice - immediatePreviousPrice;
     double percentage = 0;
 
@@ -442,98 +373,14 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget buildPriceTrend(
-      BuildContext context,
-      List<Map<String, dynamic>> prices,
-      ) {
+  Widget buildPriceTrend(BuildContext context, double productPrice) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Price Trend', style: TextTheme.of(context).labelMedium),
         const SizedBox(height: 5),
-        buildTrendGraph(context, prices),
+        ProductPriceTrendWidget(prices: samplePrices), //Sample prices
       ],
-    );
-  }
-
-  Widget buildTrendGraph(
-      BuildContext context,
-      List<Map<String, dynamic>> prices,
-      ) {
-    if (prices.isEmpty) return Container();
-
-    List<Map<String, dynamic>> reversedPrices = prices.reversed.toList();
-    List<double> percentageChanges = [];
-    double previousPrice = 0;
-
-    for (int i = 0; i < reversedPrices.length; i++) {
-      final entry = reversedPrices[i];
-      final price = entry.values.first as double;
-
-      double change = 0;
-      if (i != 0 && previousPrice != 0) {
-        change = ((price - previousPrice).abs() / previousPrice) * 100;
-      }
-      percentageChanges.add(change);
-      previousPrice = price;
-    }
-
-    double maxChange = percentageChanges.reduce((a, b) => a > b ? a : b);
-
-    previousPrice = 0;
-    List<Widget> segments = [];
-
-    for (int i = 0; i < reversedPrices.length; i++) {
-      final entry = reversedPrices[i];
-      final date = entry.keys.first;
-      final price = entry[date] as double;
-
-      double change = percentageChanges[i];
-
-      double segmentWidth = maxChange > 0
-          ? ((change / maxChange) * 300).clamp(150, 200)
-          : 150;
-
-      Color color = (i == 0 || price >= previousPrice)
-          ? Colors.green[500]!
-          : Colors.red[500]!;
-
-      final String symbol = (i == 0 || price >= previousPrice) ? '+' : '-';
-
-      segments.add(
-        Container(
-          width: segmentWidth,
-          height: 70,
-          margin: const EdgeInsets.symmetric(horizontal: 1),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          alignment: Alignment.center,
-          child: RichText(
-            text: TextSpan(
-              style: TextTheme.of(context).labelMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              children: [
-                TextSpan(text: '$date \n Ksh.'),
-                TextSpan(
-                  text:
-                  '${price.toStringAsFixed(2)}($symbol${change.toStringAsFixed(2)}%)',
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      previousPrice = price;
-    }
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(children: segments.reversed.toList()),
     );
   }
 
@@ -648,144 +495,19 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
-  Widget buildWarehouses(BuildContext context) {
-    final List<Map<String, dynamic>> stores =
-        product['stores'] as List<Map<String, dynamic>> ?? [];
+  Widget buildWarehouses(BuildContext context, List<Stock> productStores) {
     return Container(
       height: MediaQuery.of(context).size.height * .15,
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: stores.isEmpty
+      child: productStores.isEmpty
           ? buildNoStores(context)
-          : buildStores(context, stores),
+          : ProductStoresWidget(stores: productStores),
     );
   }
 
   Widget buildNoStores(BuildContext context) {
     return Center(
       child: Text('No Stores found', style: TextTheme.of(context).bodyMedium),
-    );
-  }
-
-  Widget buildStores(BuildContext context, List<Map<String, dynamic>> stores) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Stores', style: TextTheme.of(context).labelMedium),
-        const SizedBox(height: 5),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * .1,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: stores.length,
-            separatorBuilder: (context, index) {
-              return const SizedBox(width: 10);
-            },
-            itemBuilder: (context, index) {
-              final store = stores[index];
-              return buildStore(context, store);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildStore(BuildContext context, Map<String, dynamic> store) {
-    return InkWell(
-      child: Container(
-        width: MediaQuery.of(context).size.width * .8,
-        margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).appBarTheme.backgroundColor,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(14),
-            bottomRight: Radius.circular(14),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade400,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 5),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    store['name'],
-                    style: TextTheme.of(context).bodyMedium,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    store['location'],
-                    style: TextTheme.of(context).labelMedium,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Text(
-                    store['stock'].toString(),
-                    style: TextTheme.of(context).bodyMedium,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 15,
-                        color: store['stock'] >= 10
-                            ? Colors.green[500]!
-                            : store['stock'] < 1
-                            ? Colors.red[500]!
-                            : Colors.deepOrange[500]!,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        store['stock'] >= 10
-                            ? 'In Stock'
-                            : store['stock'] < 1
-                            ? 'Out'
-                            : 'Low Stock',
-                        style: TextTheme.of(context).labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: store['stock'] >= 10
-                              ? Colors.green[500]!
-                              : store['stock'] < 1
-                              ? Colors.red[500]!
-                              : Colors.deepOrange[500]!,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildDescription(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-      child: Center(
-        child: Text(
-          product['description'],
-          style: TextTheme.of(context).labelMedium,
-        ),
-      ),
     );
   }
 }

@@ -81,8 +81,17 @@ GoRouter createAppRouter(WidgetRef ref) {
                         path: ':id',
                         name: 'Product Details',
                         builder: (context, state) {
-                          final productId = state.pathParameters['id'];
-                          return const ProductScreen();
+                          final String? productId = state.pathParameters['id'];
+                          if (productId == null || productId.isEmpty) {
+                            return const Scaffold(
+                              body: Center(
+                                child: Text(
+                                  'Error: Product ID is missing.'
+                                ),
+                              ),
+                            );
+                          }
+                          return ProductScreen(productId: productId);
                         }
                     )
                   ]
