@@ -6,6 +6,7 @@ import 'package:l_mobile_sales_mini/presentation/widgets/common/dialogs/select_c
 import 'package:l_mobile_sales_mini/presentation/widgets/common/dialogs/select_product_dialog_widget.dart';
 
 import '../../../data/models/customers/customer_model.dart';
+import '../../../presentation/widgets/common/dialogs/select_date_dialog_widget.dart';
 
 Future<Customer?> getCustomerFromDialog() async {
   final Customer? selected = await SmartDialog.show(
@@ -33,4 +34,12 @@ String generateOrderId() {
 
   final id = (timePart + randomPart).toUpperCase();
   return id.length > 7 ? id.substring(id.length - 7) : id;
+}
+
+Future<DateTime?> getDateFromDialog() async {
+  final DateTime? selected = await SmartDialog.show(
+    builder: (_) => SelectDateDialogWidget(),
+  );
+
+  return selected;
 }

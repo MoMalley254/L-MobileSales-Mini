@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:l_mobile_sales_mini/core/utils/cart/cart_utils.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/cart_product_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/section_head.dart';
@@ -34,6 +35,8 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   double lineTotalsWithDiscounts = 0.0;
   double totalQuantities = 0;
   double totalDiscount = 0.0;
+
+  DateTime deliveryDate = DateTime.now();
 
   void addProduct(Product product) {
     setState(() {
@@ -99,15 +102,24 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     });
   }
 
+  Future<void> updateDeliveryDate() async{
+    DateTime? selectedDate = await getDateFromDialog();
+    if (selectedDate != null) {
+      setState(() {
+        deliveryDate = selectedDate;
+      });
+    }
+  }
+
   void doProceed() async {
     final cartItem = CartModel.create(
       products: selectedProducts,
       customer: selectedCustomer!,
-      quantity: 1, // cart-level multiplier (keep 1)
-      discount: 0,
+      quantity: totalQuantities.toInt(),
+      discount: totalDiscount,
       isDiscountPercentage: false,
       orderTime: DateTime.now(),
-      deliveryDate: DateTime.now(),
+      deliveryDate: deliveryDate,
     );
 
     await ref.read(cartProvider.notifier).addToCart(cartItem);
@@ -209,6 +221,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                 lineTotalsWithDiscounts < 1
                     ? buildTotalsRow(context, 'TOTAL', lineTotalsWithDiscounts)
                     : SizedBox.shrink(),
+                buildDeliveryDate(context),
                 buildProceedButton(context)
               ],
             ),
@@ -226,6 +239,28 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             style: TextTheme.of(context).bodyMedium,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildDeliveryDate(BuildContext context) {
+    final String formattedDate = DateFormat('dd/MM/yyyy').format(deliveryDate);
+    return TextButton.icon(
+      onPressed: updateDeliveryDate,
+      label: RichText(
+        text: TextSpan(
+            style: TextTheme.of(context).labelMedium,
+            children: [
+              TextSpan(text: 'Delivery Date: '),
+              TextSpan(
+                  text: formattedDate, style: TextTheme.of(context).bodyMedium)
+            ]
+        ),
+      ),
+      icon: Icon(
+        Icons.edit,
+        size: 20,
+        color: Colors.redAccent,
       ),
     );
   }
