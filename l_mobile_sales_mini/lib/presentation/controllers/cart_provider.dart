@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:l_mobile_sales_mini/data/models/cart/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/models/products/product_model.dart';
+
 final cartProvider = AsyncNotifierProvider<CartNotifier, List<CartModel>>(
   CartNotifier.new,
 );
@@ -34,20 +36,19 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
     try {
       final List<CartModel> currentCart = [...(state.value ?? [])];
 
-      // Check if the same product for same customer already exists
+      // Find existing cart item with same customer & same products
       final index = currentCart.indexWhere(
         (item) =>
-            item.product.id == cartItem.product.id &&
-            item.customer.id == cartItem.customer.id,
+            item.customer.id == cartItem.customer.id &&
+            _sameProducts(item.products, cartItem.products),
       );
 
       if (index >= 0) {
-        // If exists, update quantity and recalculate totalPrice
         final existingItem = currentCart[index];
         final updatedQuantity = existingItem.quantity + cartItem.quantity;
 
         final updatedItem = CartModel.create(
-          product: existingItem.product,
+          products: existingItem.products,
           customer: existingItem.customer,
           quantity: updatedQuantity,
           discount: existingItem.discount,
@@ -58,7 +59,6 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
 
         currentCart[index] = updatedItem;
       } else {
-        // If not exists, just add new item
         currentCart.add(cartItem);
       }
 
@@ -69,14 +69,28 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
     }
   }
 
+  bool _sameProducts(List<Product> a, List<Product> b) {
+    if (a.length != b.length) return false;
+
+    final aIds = a.map((p) => p.id).toList()..sort();
+    final bIds = b.map((p) => p.id).toList()..sort();
+
+    for (int i = 0; i < aIds.length; i++) {
+      if (aIds[i] != bIds[i]) return false;
+    }
+    return true;
+  }
+
   Future<void> removeFromCart(CartModel cartItem) async {
     try {
       final List<CartModel> currentCart = [...(state.value ?? [])];
+
       currentCart.removeWhere(
         (item) =>
-            item.product.id == cartItem.product.id &&
-            item.customer.id == cartItem.customer.id,
+            item.customer.id == cartItem.customer.id &&
+            _sameProducts(item.products, cartItem.products),
       );
+
       state = AsyncValue.data(currentCart);
       await _persistCart();
     } catch (e, st) {

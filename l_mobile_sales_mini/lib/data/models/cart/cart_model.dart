@@ -1,8 +1,10 @@
+import 'package:l_mobile_sales_mini/core/utils/cart/cart_utils.dart';
 import 'package:l_mobile_sales_mini/data/models/customers/customer_model.dart';
 import 'package:l_mobile_sales_mini/data/models/products/product_model.dart';
 
 class CartModel {
-  final Product product;
+  String orderId;
+  final List<Product> products;
   final Customer customer;
   final int quantity;
   final double discount;
@@ -12,7 +14,8 @@ class CartModel {
   final DateTime deliveryDate;
 
   CartModel({
-    required this.product,
+    required this.orderId,
+    required this.products,
     required this.customer,
     required this.quantity,
     required this.discount,
@@ -23,7 +26,7 @@ class CartModel {
   });
 
   factory CartModel.create({
-    required Product product,
+    required List<Product> products,
     required Customer customer,
     required int quantity,
     required double discount,
@@ -31,17 +34,17 @@ class CartModel {
     required DateTime orderTime,
     required DateTime deliveryDate,
   }) {
-    double priceBeforeDiscount = product.price * quantity;
-    double totalPrice;
+    final String id = generateOrderId();
+    final double priceBeforeDiscount =
+        products.fold(0.0, (sum, p) => sum + p.price) * quantity;
 
-    if (isDiscountPercentage) {
-      totalPrice = priceBeforeDiscount * (1 - discount / 100);
-    } else {
-      totalPrice = priceBeforeDiscount - discount;
-    }
+    final double totalPrice = isDiscountPercentage
+        ? priceBeforeDiscount * (1 - discount / 100)
+        : priceBeforeDiscount - discount;
 
     return CartModel(
-      product: product,
+      orderId: id,
+      products: products,
       customer: customer,
       quantity: quantity,
       discount: discount,
@@ -53,7 +56,8 @@ class CartModel {
   }
 
   Map<String, dynamic> toJson() => {
-    'product': product.toJson(),
+    'orderId': orderId,
+    'products': products.map((p) => p.toJson()).toList(),
     'customer': customer.toJson(),
     'quantity': quantity,
     'discount': discount,
@@ -64,7 +68,10 @@ class CartModel {
   };
 
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
-    product: Product.fromJson(json['product']),
+    orderId: json['orderId'],
+    products: (json['products'] as List)
+        .map((e) => Product.fromJson(e))
+        .toList(),
     customer: Customer.fromJson(json['customer']),
     quantity: json['quantity'],
     discount: (json['discount'] as num).toDouble(),
