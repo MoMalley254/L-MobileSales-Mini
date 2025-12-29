@@ -115,7 +115,8 @@ GoRouter createAppRouter(WidgetRef ref) {
             builder: (context, state) {
               final productId = state.pathParameters['productId'];
               final customerId = state.pathParameters['customerId'];
-              final quantity = int.parse(state.pathParameters['quantity']!);
+              final String? quantityString = state.pathParameters['quantity'];
+              final int? quantity = quantityString == null ? null : int.tryParse(quantityString);
 
               return Consumer(
                 builder: (context, ref, _) {

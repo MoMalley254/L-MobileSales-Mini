@@ -30,7 +30,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     super.initState();
     selectedProduct = widget.product;
     selectedCustomer = widget.customer;
-    quantity = widget.quantity!;
+    quantity = (widget.quantity ?? 1);
   }
 
   @override
