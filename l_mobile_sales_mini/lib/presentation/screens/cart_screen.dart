@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:l_mobile_sales_mini/core/utils/cart/cart_utils.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/cart_product_widget.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/section_head.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_customer_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_product_widget.dart';
 
@@ -24,90 +26,116 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class _CartScreenState extends ConsumerState<CartScreen> {
   Customer? selectedCustomer;
-  Product? selectedProduct;
-  int quantity = 1;
-  int maxQty = 99;
-  double discount = 0.0;
-  bool isDiscountPercentage = false;
-  double lineTotals = 0.00;
-  double lineTotalsWithDiscount = 0.00;
-  final TextEditingController _cartQtyController = TextEditingController();
+  List<Product> selectedProducts = [];
+  Map<String, dynamic> productTotals = {};
+  Map<String, dynamic> productQuantities = {};
 
-  void updateCartQty(bool increase) {
+  double lineTotals = 0.0;
+  double lineTotalsWithDiscounts = 0.0;
+  double totalQuantities = 0;
+  double totalDiscount = 0.0;
+
+  void addProduct(Product product) {
     setState(() {
-      quantity = increase ? quantity + 1 : quantity - 1;
-      quantity = quantity.clamp(0, maxQty);
-
-      _cartQtyController.text = quantity.toString();
-    });
-
-    doTotals();
-  }
-
-  void setCartQty() {
-    setState(() {
-      quantity = int.tryParse(_cartQtyController.text) ?? 0;
-      quantity = quantity.clamp(0, maxQty);
-
-      _cartQtyController.text = quantity.toString();
-    });
-
-    doTotals();
-  }
-
-  void doTotals() {
-    double newLineTotals = selectedProduct!.price * quantity;
-    double newLineTotalsWithDiscount = getTotalsAfterDiscount(newLineTotals);
-
-    setState(() {
-      lineTotals = newLineTotals;
-      lineTotalsWithDiscount = newLineTotalsWithDiscount;
+      if (!selectedProducts.any((p) => p.id == product.id)) {
+        selectedProducts.add(product);
+        productTotals[product.id] = {
+          'totals': product.price,
+          'discount': 0.0,
+          'totalsWithDiscount': 0.0,
+        };
+        productQuantities[product.id] = {'quantity': 1};
+      }
     });
   }
 
-  double getTotalsAfterDiscount(double newLineTotals) {
-    if (isDiscountPercentage) {
-      double discounted = selectedProduct!.price * (discount / 100);
-      setState(() {
-        discount = discounted;
-      });
-      return newLineTotals - discounted;
-    } else {
-      return newLineTotals - discount;
-    }
+  void removeProduct(Product product) {
+    setState(() {
+      selectedProducts.remove(product);
+      productTotals.removeWhere((productId, _) => productId == product.id);
+      productQuantities.removeWhere((productId, _) => productId == product.id);
+    });
+  }
+
+  void confirmProduct(
+    Product product,
+    int quantity,
+    double totals,
+    double discount,
+    double totalsWithDiscount,
+  ) {
+    productTotals[product.id] = {
+      'totals': totals,
+      'discount': discount,
+      'totalsWithDiscount': totalsWithDiscount,
+    };
+    productQuantities[product.id] = {'quantity': quantity.toDouble()};
+
+    getTotals();
+  }
+
+  double getLineTotals() {
+    return productTotals.values.fold(0, (sum, item) => sum + item['totals']);
+  }
+
+  double getTotalDiscounts() {
+    return productTotals.values.fold(0, (sum, item) => sum + item['discount']);
+  }
+
+  double getLineTotalsWithDiscounts() {
+    return productTotals.values.fold(0, (sum, item) => sum + item['totalsWithDiscount']);
+  }
+
+  double getQuantityTotals() {
+    return productQuantities.values.fold(0, (sum, item) => sum + item['quantity']);
+  }
+
+  void getTotals() {
+    setState(() {
+      lineTotals = getLineTotals();
+      totalDiscount = getTotalDiscounts();
+      lineTotalsWithDiscounts = getLineTotalsWithDiscounts();
+      totalQuantities = getQuantityTotals();
+    });
   }
 
   void doProceed() async {
-    final CartModel cartItem = CartModel.create(
-        product: selectedProduct!,
-        customer: selectedCustomer!,
-        quantity: quantity,
-        discount: discount,
-        orderTime: DateTime.now(),
-        deliveryDate: DateTime.now(),
+    final cartItem = CartModel.create(
+      products: selectedProducts,
+      customer: selectedCustomer!,
+      quantity: 1, // cart-level multiplier (keep 1)
+      discount: 0,
+      isDiscountPercentage: false,
+      orderTime: DateTime.now(),
+      deliveryDate: DateTime.now(),
     );
 
-    final cartNotifier = ref.read(cartProvider.notifier);
-    await cartNotifier.addToCart(cartItem);
+    await ref.read(cartProvider.notifier).addToCart(cartItem);
   }
 
   @override
   void initState() {
     super.initState();
-    selectedProduct = widget.product;
+
+    if (widget.product != null) {
+      selectedProducts.add(widget.product!);
+      productTotals[widget.product!.id] = {
+        'totals': widget.product!.price,
+        'discount': 0.0,
+        'totalsWithDiscount': 0.0,
+      };
+      productQuantities[widget.product!.id] = {
+        'quantity': widget.quantity ?? 1,
+      };
+    }
+
     selectedCustomer = widget.customer;
-    quantity = (widget.quantity ?? 1);
-    _cartQtyController.text = quantity.toString();
-    maxQty = (widget.product != null
-        ? getItemStockTotals(widget.product!.stock)
-        : 99);
   }
 
   @override
   Widget build(BuildContext context) {
     final customersAsync = ref.watch(customersProvider);
     final productsAsync = ref.watch(productsProvider);
-    final cartAsync = ref.watch(cartProvider);
 
     return customersAsync.when(
       data: (customers) {
@@ -147,8 +175,16 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     );
   }
 
+  Widget buildHeader(BuildContext context) {
+    return Text(
+      'Add To Cart',
+      style: TextTheme.of(context).bodyLarge,
+      textAlign: TextAlign.center,
+    );
+  }
+
   Widget buildActions(BuildContext context) {
-    return selectedCustomer == null || selectedProduct == null
+    return lineTotals < 1 && totalQuantities < 1
         ? SizedBox.shrink()
         : Container(
             width: double.infinity,
@@ -167,93 +203,29 @@ class _CartScreenState extends ConsumerState<CartScreen> {
             ),
             child: Column(
               children: [
-                buildQuantitySelection(context),
-                const SizedBox(height: 5),
-                buildDiscountSelection(context),
-                const SizedBox(height: 5),
-                buildTotals(context),
+                buildTotalsRow(context, 'SUB TOTAL', lineTotals),
+                buildTotalsRow(context, 'Discount', totalDiscount),
+                buildTotalsRow(context, 'Quantity', totalQuantities),
+                lineTotalsWithDiscounts < 1
+                    ? buildTotalsRow(context, 'TOTAL', lineTotalsWithDiscounts)
+                    : SizedBox.shrink(),
+                buildProceedButton(context)
               ],
             ),
           );
   }
 
-  Widget buildQuantitySelection(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(flex: 2, child: buildQuantitySection(context)),
-        const SizedBox(width: 10),
-        Expanded(flex: 2, child: buildProceedButton(context)),
-      ],
-    );
-  }
-
-  Widget buildQuantitySection(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).appBarTheme.backgroundColor,
-        borderRadius: BorderRadius.circular(7),
-      ),
-      child: Column(
-        children: [
-          buildMaxQtyLabel(context),
-          Row(
-            children: [
-              buildQuantityButton(context, false),
-              buildQuantityInput(context),
-              buildQuantityButton(context, true),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildMaxQtyLabel(BuildContext context) {
+  Widget buildTotalsRow(BuildContext context, String label, double value) {
     return RichText(
       text: TextSpan(
         style: TextTheme.of(context).labelMedium,
         children: [
-          TextSpan(text: 'Available : '),
+          TextSpan(text: '$label: '),
           TextSpan(
-            text: maxQty.toString(),
-            style: TextTheme.of(
-              context,
-            ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
+            text: value.toStringAsFixed(2),
+            style: TextTheme.of(context).bodyMedium,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildQuantityButton(BuildContext context, bool increase) {
-    return IconButton(
-      onPressed: () => updateCartQty(increase),
-      icon: Icon(
-        increase ? Icons.add : Icons.remove,
-        size: 20,
-        color: Colors.black,
-      ),
-    );
-  }
-
-  Widget buildQuantityInput(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Center(
-        child: TextFormField(
-          controller: _cartQtyController,
-          onChanged: (String? value) {
-            setCartQty();
-          },
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            hintStyle: TextTheme.of(context).bodyMedium,
-            filled: true,
-            fillColor: Theme.of(context).appBarTheme.backgroundColor,
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-          ),
-        ),
       ),
     );
   }
@@ -280,105 +252,6 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildTotals(BuildContext context) {
-    return Column(
-      children: [buildTotalsRow(context), buildTotalsWithDiscount(context)],
-    );
-  }
-
-  Widget buildTotalsRow(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: TextTheme.of(context).labelMedium,
-        children: [
-          TextSpan(text: 'TOTAL: '),
-          TextSpan(
-            text: lineTotals.toStringAsFixed(2),
-            style: TextTheme.of(context).bodyMedium,
-          ),
-          TextSpan(
-            text: ' TAX: (${selectedProduct!.taxRate.toStringAsFixed(1)})',
-            style: TextTheme.of(
-              context,
-            ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDiscountSelection(BuildContext context) {
-    return Row(
-      children: [
-        const Text('Discount:'),
-        const SizedBox(width: 10),
-        SizedBox(
-          width: 80,
-          child: TextFormField(
-            initialValue: discount.toString(),
-            keyboardType: TextInputType.number,
-            onChanged: (val) {
-              setState(() => discount = double.tryParse(val) ?? 0);
-              doTotals();
-            },
-          ),
-        ),
-        const SizedBox(width: 10),
-        DropdownButton<bool>(
-          value: isDiscountPercentage,
-          items: const [
-            DropdownMenuItem(value: false, child: Text('Amount')),
-            DropdownMenuItem(value: true, child: Text('%')),
-          ],
-          onChanged: (val) {
-            setState(() => isDiscountPercentage = val ?? false);
-            doTotals();
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget buildTotalsWithDiscount(BuildContext context) {
-    String symbol = isDiscountPercentage ? '%' : '';
-    return lineTotalsWithDiscount < 1
-        ? SizedBox.shrink()
-        : RichText(
-            text: TextSpan(
-              style: TextTheme.of(context).labelMedium,
-              children: [
-                TextSpan(text: 'TOTAL AFTER DISCOUNT: '),
-                TextSpan(
-                  text: lineTotalsWithDiscount.toStringAsFixed(2),
-                  style: TextTheme.of(context).bodyMedium,
-                ),
-                TextSpan(
-                  text: '(Discount: $discount$symbol)',
-                  style: TextTheme.of(
-                    context,
-                  ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          );
-  }
-
-  Widget buildHeader(BuildContext context) {
-    return Text(
-      'Add To Cart',
-      style: TextTheme.of(context).bodyLarge,
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget buildSectionHead(BuildContext context, String title) {
-    return Text(
-      title,
-      style: TextTheme.of(context).labelMedium,
-      textAlign: TextAlign.center,
     );
   }
 
@@ -414,7 +287,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   ) {
     return Column(
       children: [
-        buildSectionHead(context, 'Customer:'),
+        SectionHead(title: 'Customer:'),
         const SizedBox(height: 5),
         SelectedCustomerWidget(customer: selectedCustomer!),
         buildSelectCustomerButton(context),
@@ -471,7 +344,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
           ),
         ],
       ),
-      child: selectedProduct != null
+      child: selectedProducts.isNotEmpty
           ? buildSelectedProduct(context, productsAsync)
           : buildNoProductsSelected(context, productsAsync),
     );
@@ -483,8 +356,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   ) {
     return Column(
       children: [
-        buildSectionHead(context, 'Product:'),
-        SelectedProductWidget(product: selectedProduct!),
+        buildSelectedProducts(context),
         buildSelectProductButton(context),
       ],
     );
@@ -511,14 +383,26 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       onPressed: () async {
         final product = await getProductFromDialog();
         if (product != null) {
-          setState(() {
-            selectedProduct = product;
-            maxQty = getItemStockTotals(product.stock);
-          });
+          addProduct(product);
         }
       },
       icon: Icon(Icons.edit, size: 20, color: Colors.green),
       label: Text('Select Product', style: TextTheme.of(context).bodyMedium),
+    );
+  }
+
+  Widget buildSelectedProducts(BuildContext context) {
+    return Column(
+      children: [
+        ...selectedProducts.map(
+          (product) => CartProductWidget(
+            product: product,
+            customer: selectedCustomer!,
+            onRemove: removeProduct,
+            onConfirm: confirmProduct,
+          ),
+        ),
+      ],
     );
   }
 }
