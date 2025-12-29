@@ -129,14 +129,16 @@ GoRouter createAppRouter(WidgetRef ref) {
                   }
 
                   if (customerId != null) {
-                    final customers = ref.read(customersProvider).value ?? [];
-                    customer = customers.firstWhere(
-                      (c) => c.id == customerId,
-                      orElse: () => null,
-                    );
+                    customer = ref
+                        .read(customersProvider.notifier)
+                        .getCustomerFromId(customerId);
                   }
 
-                  return CartScreen(product: product, customer: customer, quantity: quantity,);
+                  return CartScreen(
+                    product: product,
+                    customer: customer,
+                    quantity: quantity,
+                  );
                 },
               );
             },

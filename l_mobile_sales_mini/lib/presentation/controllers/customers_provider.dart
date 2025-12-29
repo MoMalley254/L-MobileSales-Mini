@@ -19,4 +19,9 @@ class CustomersNotifier extends AsyncNotifier<List<Customer>> {
       return [];
     }
   }
+
+
+  Customer? getCustomerFromId(String customerId) {
+    return state.value?.firstWhere((c) => c.id == customerId);
+  }
 }
