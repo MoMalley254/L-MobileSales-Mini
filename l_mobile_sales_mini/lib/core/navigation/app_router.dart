@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l_mobile_sales_mini/core/navigation/route_names.dart';
 import 'package:l_mobile_sales_mini/presentation/controllers/auth_provider.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/checkout_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
@@ -65,7 +66,9 @@ GoRouter createAppRouter(WidgetRef ref) {
             RouteNames.customersRoute,
           )) {
             currentIndex = 1;
-          } else if (state.uri.toString().startsWith('/settings')) {
+          } else if (state.uri.toString().startsWith(
+            RouteNames.checkoutRoute,
+          )) {
             currentIndex = 3;
           }
           return Scaffold(
@@ -116,7 +119,9 @@ GoRouter createAppRouter(WidgetRef ref) {
               final productId = state.pathParameters['productId'];
               final customerId = state.pathParameters['customerId'];
               final String? quantityString = state.pathParameters['quantity'];
-              final int? quantity = quantityString == null ? null : int.tryParse(quantityString);
+              final int? quantity = quantityString == null
+                  ? null
+                  : int.tryParse(quantityString);
 
               return Consumer(
                 builder: (context, ref, _) {
@@ -143,6 +148,11 @@ GoRouter createAppRouter(WidgetRef ref) {
                 },
               );
             },
+          ),
+          GoRoute(
+            path: RouteNames.checkoutRoute,
+            name: 'Checkout',
+            builder: (context, state) => CheckoutScreen(),
           ),
         ],
       ),

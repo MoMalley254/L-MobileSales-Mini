@@ -28,7 +28,7 @@ class BottomNavigationWidget extends StatelessWidget {
             GoRouter.of(context).go(RouteNames.inventoryRoute);
             break;
           case 3:
-            GoRouter.of(context).go('/settings');
+            GoRouter.of(context).go(RouteNames.checkoutRoute);
             break;
         }
       },
@@ -55,10 +55,10 @@ class BottomNavigationWidget extends StatelessWidget {
           ),
         ),
         BottomNavigationBarItem(
-          label: 'Settings',
-          tooltip: 'Settings',
+          label: 'Checkout',
+          tooltip: 'Checkout',
           icon: Icon(
-              Icons.settings
+              Icons.shopping_cart_checkout
           ),
         ),
       ],

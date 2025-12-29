@@ -6,4 +6,5 @@ class RouteNames {
   static const productRoute = '/products/:id';
   static const customersRoute = '/customers';
   static const cartRoute = '/cart';
+  static const checkoutRoute = '/checkout';
 }
