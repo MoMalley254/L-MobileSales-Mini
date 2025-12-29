@@ -59,7 +59,7 @@ class QuickActionsWidget extends StatelessWidget {
 
   Widget buildNewSale(BuildContext context) {
     return InkWell(
-      onTap: goToNewSale,
+      onTap: () => GoRouter.of(context).go(RouteNames.cartRoute),
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 10),
