@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:l_mobile_sales_mini/core/utils/cart/cart_utils.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/cart_product_widget.dart';
@@ -7,6 +8,7 @@ import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/section_h
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_customer_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_product_widget.dart';
 
+import '../../core/navigation/route_names.dart';
 import '../../core/utils/inventory/stock_utils.dart';
 import '../../data/models/customers/customer_model.dart';
 import '../../data/models/products/product_model.dart';
@@ -267,7 +269,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   Widget buildProceedButton(BuildContext context) {
     return InkWell(
-      onTap: doProceed,
+      onTap: () {
+        doProceed();
+        GoRouter.of(context).go(RouteNames.checkoutRoute);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
