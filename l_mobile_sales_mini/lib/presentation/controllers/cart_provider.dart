@@ -32,12 +32,12 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
 
   Future<void> addToCart(CartModel cartItem) async {
     try {
-      final currentCart = [...(state.value ?? [])];
+      final List<CartModel> currentCart = [...(state.value ?? [])];
 
       // Check if the same product for same customer already exists
       final index = currentCart.indexWhere(
-            (item) =>
-        item.product.id == cartItem.product.id &&
+        (item) =>
+            item.product.id == cartItem.product.id &&
             item.customer.id == cartItem.customer.id,
       );
 
@@ -71,10 +71,10 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
 
   Future<void> removeFromCart(CartModel cartItem) async {
     try {
-      final currentCart = [...(state.value ?? [])];
+      final List<CartModel> currentCart = [...(state.value ?? [])];
       currentCart.removeWhere(
-            (item) =>
-        item.product.id == cartItem.product.id &&
+        (item) =>
+            item.product.id == cartItem.product.id &&
             item.customer.id == cartItem.customer.id,
       );
       state = AsyncValue.data(currentCart);
@@ -97,7 +97,9 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
   Future<void> _persistCart() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final List<dynamic> jsonList = state.value!.map((item) => item.toJson()).toList();
+      final List<dynamic> jsonList = state.value!
+          .map((item) => item.toJson())
+          .toList();
       await prefs.setString('cart_key', json.encode(jsonList));
     } catch (e, st) {
       state = AsyncValue.error(e, st);
