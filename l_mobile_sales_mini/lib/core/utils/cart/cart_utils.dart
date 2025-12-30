@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:l_mobile_sales_mini/data/models/cart/cart_model.dart';
 import 'package:l_mobile_sales_mini/data/models/products/product_model.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/common/dialogs/cart_docs_dialog_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/dialogs/select_customer_dialog_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/dialogs/select_product_dialog_widget.dart';
 
@@ -42,4 +44,10 @@ Future<DateTime?> getDateFromDialog() async {
   );
 
   return selected;
+}
+
+Future<void> showCartDoc(CartModel cart, bool isInvoice) async {
+  await SmartDialog.show(
+    builder: (_) => CartDocsDialogWidget(cart: cart, isInvoice: isInvoice)
+  );
 }

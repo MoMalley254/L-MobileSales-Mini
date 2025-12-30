@@ -6,6 +6,7 @@ import 'package:l_mobile_sales_mini/data/models/cart/cart_model.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_customer_widget.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/specific/cart/selected_product_widget.dart';
 
+import '../../core/utils/cart/cart_utils.dart';
 import '../controllers/cart_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -127,6 +128,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             cart.orderTime,
           ),
           const SizedBox(height: 5),
+          buildActions(context, cart),
+          const SizedBox(height: 5),
           SelectedCustomerWidget(
             customer: cart.customer,
             showFullDetails: false,
@@ -224,33 +227,46 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  // Widget buildActions(BuildContext context) {
-  //   return selectedCustomer == null || selectedProduct == null
-  //       ? SizedBox.shrink()
-  //       : Container(
-  //     width: double.infinity,
-  //     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-  //     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).colorScheme.primary,
-  //       borderRadius: BorderRadius.circular(7),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.grey[400]!,
-  //           blurRadius: 4,
-  //           offset: Offset(0, 4),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         buildQuantitySelection(context),
-  //         const SizedBox(height: 5),
-  //         buildDiscountSelection(context),
-  //         const SizedBox(height: 5),
-  //         buildTotals(context),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget buildActions(BuildContext context, CartModel cart) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          buildDocs(context, cart)
+        ],
+      ),
+    );
+  }
+
+  Widget buildDocs(BuildContext context, CartModel cart) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        buildDocButton(context, true, cart),
+        buildDocButton(context, false, cart),
+      ],
+    );
+  }
+
+  Widget buildDocButton(BuildContext context, bool isInvoice, CartModel cart) {
+    return ElevatedButton(
+        onPressed: () async {
+          //Show preview dialogs
+          await showCartDoc(cart, isInvoice);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)
+          )
+        ),
+        child: Text(
+          isInvoice ? 'Invoice' : 'Receipt',
+          style: TextTheme.of(context).bodyMedium?.copyWith(
+            color: Colors.white
+          ),
+        )
+    );
+  }
 }
