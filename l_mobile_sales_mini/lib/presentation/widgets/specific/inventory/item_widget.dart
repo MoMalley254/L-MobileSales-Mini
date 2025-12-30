@@ -118,8 +118,8 @@ class ItemWidget extends StatelessWidget {
 
           const SizedBox(height: 6),
           buildItemCategories(context, item.category, item.subcategory),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
             children: [
               Text(
                 '\$${item.price}',
