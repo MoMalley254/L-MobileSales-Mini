@@ -33,6 +33,7 @@ class CartModel {
     required int quantity,
     required double discount,
     bool isDiscountPercentage = false,
+    required double totalPrice,
     required DateTime orderTime,
     required DateTime deliveryDate,
     required Map<String, dynamic> productData,
@@ -40,10 +41,6 @@ class CartModel {
     final String id = generateOrderId();
     final double priceBeforeDiscount =
         products.fold(0.0, (sum, p) => sum + p.price) * quantity;
-
-    final double totalPrice = isDiscountPercentage
-        ? priceBeforeDiscount * (1 - discount / 100)
-        : priceBeforeDiscount - discount;
 
     return CartModel(
       orderId: id,

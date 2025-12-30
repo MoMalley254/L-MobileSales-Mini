@@ -109,9 +109,11 @@ class _InvoiceWidgetState extends State<InvoiceWidget> {
                 return _itemRow(
                     title: product.name,
                     subtitle: product.sku,
+                    actualPrice: product.price,
                     price: productData[product.id]['totalsWithDiscount'],
                     quantity: productData[product.id]['quantity'],
-                    image: product.images.first
+                    image: product.images.first,
+                    tax: product.taxRate
                 );
               }),
 
@@ -159,10 +161,15 @@ class _InvoiceWidgetState extends State<InvoiceWidget> {
   Widget _itemRow({
     required String title,
     required String subtitle,
+    required double actualPrice,
     required double price,
     required double quantity,
     required String image,
+    required double tax,
   }) {
+    final double taxedAmount = actualPrice * (tax / 100);
+    final double unitPriceWithTax = actualPrice + taxedAmount;
+    final double priceAfterTax = price - (price * (tax / 100));
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,13 +199,28 @@ class _InvoiceWidgetState extends State<InvoiceWidget> {
               ),
 
               Text(
-                  '\$ ${price.toStringAsFixed(2)}',
+                  'Price After Tax : \$ ${unitPriceWithTax.toStringAsFixed(2)}',
+                  style: TextTheme.of(context).bodyMedium
+              ),
+
+              Text(
+                  'VAT: \$ ${taxedAmount.toStringAsFixed(2)}',
+                  style: TextTheme.of(context).bodyMedium
+              ),
+
+              Text(
+                  'Unit Price : \$ ${actualPrice.toStringAsFixed(2)}',
                   style: TextTheme.of(context).bodyMedium
               ),
 
               Text(
                   'Qty: ${quantity.toStringAsFixed(0)}',
                   style: TextTheme.of(context).labelMedium
+              ),
+
+              Text(
+                  'Sub Total : \$ ${price.toStringAsFixed(2)}',
+                  style: TextTheme.of(context).bodyMedium
               ),
             ],
           ),

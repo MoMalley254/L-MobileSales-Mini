@@ -69,10 +69,14 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     double discount,
     double totalsWithDiscount,
   ) {
+    double taxedAmount = (product.price - discount) * (product.taxRate / 100);
+    double totalAfterTax = totals + taxedAmount;
+    double totalsWithTaxAndDiscount = totalAfterTax - discount;
+
     productTotals[product.id] = {
-      'totals': totals,
+      'totals': totalAfterTax,
       'discount': discount,
-      'totalsWithDiscount': discount > 0 ? totalsWithDiscount : totals,
+      'totalsWithDiscount': discount > 0 ? totalsWithTaxAndDiscount : totalAfterTax,
     };
     productQuantities[product.id] = {'quantity': quantity.toDouble()};
 
@@ -93,6 +97,10 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
   double getQuantityTotals() {
     return productQuantities.values.fold(0, (sum, item) => sum + item['quantity']);
+  }
+
+  double getTotalsWithTax() {
+    return productTotals.values.fold(0, (sum, item) => sum + item['totalsWithDiscount']);
   }
 
   void getTotals() {
@@ -123,12 +131,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       };
     }
 
+    final double cartTotal = getTotalsWithTax();
+
     final cartItem = CartModel.create(
       products: selectedProducts,
       customer: selectedCustomer!,
       quantity: totalQuantities.toInt(),
       discount: totalDiscount,
       isDiscountPercentage: false,
+      totalPrice: cartTotal,
       orderTime: DateTime.now(),
       deliveryDate: deliveryDate,
       productData: productData

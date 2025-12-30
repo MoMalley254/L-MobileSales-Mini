@@ -53,6 +53,7 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
           quantity: updatedQuantity,
           discount: existingItem.discount,
           isDiscountPercentage: existingItem.isDiscountPercentage,
+          totalPrice: existingItem.totalPrice,
           orderTime: existingItem.orderTime,
           deliveryDate: existingItem.deliveryDate,
           productData: existingItem.productData
