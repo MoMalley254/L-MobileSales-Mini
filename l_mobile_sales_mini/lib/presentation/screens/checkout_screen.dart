@@ -91,18 +91,17 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         itemCount: cartList.length,
         itemBuilder: (context, index) {
           final CartModel cart = cartList[index];
-          return buildSingleCart(context, cart);
+          return buildSingleCart(context, cart, index == cartList.length + 1);
         },
       ),
     );
   }
 
-  Widget buildSingleCart(BuildContext context, CartModel cart) {
+  Widget buildSingleCart(BuildContext context, CartModel cart, bool isLast) {
     final Map<String, dynamic> productData = cart.productData;
 
-    print('Product data $productData');
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 15),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white70,
@@ -142,6 +141,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               productData: productData[product.id],
             ),
           ),
+          SizedBox(height: isLast ? 100 : 20,)
         ],
       ),
     );
