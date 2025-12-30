@@ -6,7 +6,14 @@ import '../../../../data/models/products/product_model.dart';
 
 class SelectedProductWidget extends StatelessWidget {
   final Product product;
-  const SelectedProductWidget({super.key, required this.product});
+  final bool showFullDetails;
+  final Map<String, dynamic>? productData;
+  const SelectedProductWidget({
+    super.key,
+    required this.product,
+    required this.showFullDetails,
+    this.productData
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,9 @@ class SelectedProductWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: buildItemDetailsRow(context, product)
+      child: showFullDetails
+          ? buildItemDetailsRow(context, product)
+          : buildMinimalInfo(context, product),
     );
   }
 
@@ -54,7 +63,7 @@ class SelectedProductWidget extends StatelessWidget {
               width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) =>
-              const Icon(Icons.image_not_supported, size: 50),
+                  const Icon(Icons.image_not_supported, size: 50),
             ),
 
             //Use Image.asset(item.images.first)
@@ -96,15 +105,11 @@ class SelectedProductWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: totalStock > 10
-                      ? Colors.green[200]
-                      : Colors.red[200],
+                  color: totalStock > 10 ? Colors.green[200] : Colors.red[200],
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Text(
-                  totalStock > 0
-                      ? 'Stock: $totalStock'
-                      : 'Out of stock',
+                  totalStock > 0 ? 'Stock: $totalStock' : 'Out of stock',
                   style: TextTheme.of(
                     context,
                   ).labelMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -136,8 +141,77 @@ class SelectedProductWidget extends StatelessWidget {
 
   Widget buildItemStore(BuildContext context, Stock store) {
     return Chip(
-      label: Text('${store.warehouseId} : ${store.quantity}', style: TextTheme.of(context).labelMedium),
+      label: Text(
+        '${store.warehouseId} : ${store.quantity}',
+        style: TextTheme.of(context).labelMedium,
+      ),
       visualDensity: VisualDensity.compact,
+    );
+  }
+
+  Widget buildMinimalInfo(BuildContext context, Product product) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              //Use online link instead
+              'https://picsum.photos/400/300?1',
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.image_not_supported, size: 50),
+            ),
+
+            //Use Image.asset(item.images.first)
+          ),
+        ),
+        const SizedBox(width: 10),
+        buildMinimalProductInfo(context, product),
+      ],
+    );
+  }
+
+  Widget buildMinimalProductInfo(BuildContext context, Product product) {
+    return Expanded(
+      flex: 3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            product.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextTheme.of(context).bodyMedium,
+          ),
+          Text('SKU: ${product.sku}', style: TextTheme.of(context).labelMedium),
+
+          const SizedBox(height: 6),
+          buildSaleDetail(context, 'Price', productData!['totalsWithDiscount']),
+          buildSaleDetail(context, 'Quantity', productData!['quantity']),
+          if (productData!['discount'] > 0)
+            buildSaleDetail(context, 'Discount', productData!['discount']),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSaleDetail(BuildContext context, String label, double value) {
+    return RichText(
+      text: TextSpan(
+        style: TextTheme.of(context).labelMedium,
+        children: [
+          TextSpan(text: '$label: '),
+          TextSpan(
+            text: value.toStringAsFixed(2),
+            style: TextTheme.of(context).bodyMedium,
+          ),
+        ],
+      ),
     );
   }
 }

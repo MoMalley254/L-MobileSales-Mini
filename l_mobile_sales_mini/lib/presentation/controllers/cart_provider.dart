@@ -55,6 +55,7 @@ class CartNotifier extends AsyncNotifier<List<CartModel>> {
           isDiscountPercentage: existingItem.isDiscountPercentage,
           orderTime: existingItem.orderTime,
           deliveryDate: existingItem.deliveryDate,
+          productData: existingItem.productData
         );
 
         currentCart[index] = updatedItem;

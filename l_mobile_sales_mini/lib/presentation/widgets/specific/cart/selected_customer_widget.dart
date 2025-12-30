@@ -4,7 +4,8 @@ import '../../../../data/models/customers/customer_model.dart';
 
 class SelectedCustomerWidget extends StatelessWidget {
   final Customer customer;
-  const SelectedCustomerWidget({super.key, required this.customer});
+  final bool showFullDetails;
+  const SelectedCustomerWidget({super.key, required this.customer, required this.showFullDetails});
 
   final String sampleImage = '';
 
@@ -15,7 +16,7 @@ class SelectedCustomerWidget extends StatelessWidget {
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: buildCustomerInfo(context, customer),
+        child: showFullDetails ? buildCustomerInfo(context, customer) : buildMinimalInfo(context, customer),
       ),
     );
   }
@@ -26,27 +27,35 @@ class SelectedCustomerWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Name and category
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: buildCustomerName(context, customer.name)),
-            buildCategoryIndicator(customer.category),
-          ],
-        ),
+        buildHead(context, customer),
         const SizedBox(height: 5),
-        Row(
-          children: [
-            buildContactPerson(context, customer.contactPerson),
-            const SizedBox(width: 5),
-            buildPhoneRow(context, customer.phone),
-          ],
-        ),
+        buildPhone(context, customer),
         const SizedBox(height: 5),
         buildEmailRow(customer.email),
         const SizedBox(height: 5),
         buildAddressRow(customer.physicalAddress, customer.location),
         const SizedBox(height: 5),
         buildTaxInfo(customer.taxId),
+      ],
+    );
+  }
+
+  Widget buildHead(BuildContext context, Customer customer) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(child: buildCustomerName(context, customer.name)),
+        buildCategoryIndicator(customer.category),
+      ],
+    );
+  }
+
+  Widget buildPhone(BuildContext context, Customer customer) {
+    return Row(
+      children: [
+        buildContactPerson(context, customer.contactPerson),
+        const SizedBox(width: 5),
+        buildPhoneRow(context, customer.phone),
       ],
     );
   }
@@ -116,6 +125,17 @@ class SelectedCustomerWidget extends StatelessWidget {
         const Icon(Icons.badge, size: 16),
         const SizedBox(width: 5),
         Text('Tax ID: $taxId'),
+      ],
+    );
+  }
+
+  Widget buildMinimalInfo(BuildContext context, Customer customer) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildHead(context, customer),
+        const SizedBox(height: 5),
+        buildPhone(context, customer),
       ],
     );
   }

@@ -15,6 +15,12 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 }
 
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+
+  Future<void> deleteCartItem(CartModel cart) async {
+    await ref.read(cartProvider.notifier).removeFromCart(cart);
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -86,6 +92,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 
   Widget buildSingleCart(BuildContext context, CartModel cart) {
+    final Map<String, dynamic> productData = cart.productData;
+
+    print('Product data $productData');
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 15),
       padding: const EdgeInsets.all(10),
@@ -102,7 +111,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ),
       child: Column(
         children: [
-          buildOrderId(context, cart.orderId),
+          buildCartHead(context, cart),
           const SizedBox(height: 10),
           buildPricing(
             context,
@@ -113,13 +122,37 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             cart.orderTime,
           ),
           const SizedBox(height: 5),
-          SelectedCustomerWidget(customer: cart.customer),
+          SelectedCustomerWidget(customer: cart.customer, showFullDetails: false),
           const SizedBox(height: 5),
           ...cart.products.map(
-            (product) => SelectedProductWidget(product: product),
+            (product) => SelectedProductWidget(
+                product: product,
+              showFullDetails: false,
+              productData: productData[product.id],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildCartHead(BuildContext context, CartModel cart) {
+    return Row(
+      children: [
+        buildOrderId(context, cart.orderId),
+        buildDeleteCartButton(context, cart)
+      ],
+    );
+  }
+
+  Widget buildDeleteCartButton(BuildContext context, CartModel cart) {
+    return IconButton.filled(
+        onPressed: () => deleteCartItem(cart),
+        icon: Icon(
+          Icons.delete,
+          size: 25,
+          color: Colors.red,
+        )
     );
   }
 
@@ -185,6 +218,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       ),
     );
   }
+
 
   // Widget buildActions(BuildContext context) {
   //   return selectedCustomer == null || selectedProduct == null

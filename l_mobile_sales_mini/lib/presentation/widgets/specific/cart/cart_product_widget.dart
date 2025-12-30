@@ -127,7 +127,7 @@ class _CartProductWidgetState extends ConsumerState<CartProductWidget> {
       child: Column(
         children: [
           SectionHead(title: 'Product:'),
-          SelectedProductWidget(product: widget.product),
+          SelectedProductWidget(product: widget.product, showFullDetails: true,),
           const SizedBox(height: 5),
           buildActions(context, widget.product),
           buildParentFunctions(context, widget.product),

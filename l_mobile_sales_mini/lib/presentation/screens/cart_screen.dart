@@ -72,7 +72,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     productTotals[product.id] = {
       'totals': totals,
       'discount': discount,
-      'totalsWithDiscount': totalsWithDiscount,
+      'totalsWithDiscount': discount > 0 ? totalsWithDiscount : totals,
     };
     productQuantities[product.id] = {'quantity': quantity.toDouble()};
 
@@ -114,6 +114,15 @@ class _CartScreenState extends ConsumerState<CartScreen> {
   }
 
   void doProceed() async {
+    final Map<String, Map<String, dynamic>> productData = {};
+
+    for (final id in productTotals.keys) {
+      productData[id] = {
+        ...productTotals[id]!,
+        ...productQuantities[id]!,
+      };
+    }
+
     final cartItem = CartModel.create(
       products: selectedProducts,
       customer: selectedCustomer!,
@@ -122,6 +131,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       isDiscountPercentage: false,
       orderTime: DateTime.now(),
       deliveryDate: deliveryDate,
+      productData: productData
     );
 
     await ref.read(cartProvider.notifier).addToCart(cartItem);
@@ -329,7 +339,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
       children: [
         SectionHead(title: 'Customer:'),
         const SizedBox(height: 5),
-        SelectedCustomerWidget(customer: selectedCustomer!),
+        SelectedCustomerWidget(customer: selectedCustomer!, showFullDetails: true,),
         buildSelectCustomerButton(context),
       ],
     );

@@ -80,7 +80,7 @@ class _SelectProductDialogWidgetState
                 onTap: () {
                   SmartDialog.dismiss(force: true, result: product);
                 },
-                child: SelectedProductWidget(product: product),
+                child: SelectedProductWidget(product: product, showFullDetails: true,),
               );
             },
           ),

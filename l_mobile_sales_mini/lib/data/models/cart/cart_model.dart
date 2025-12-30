@@ -12,6 +12,7 @@ class CartModel {
   final double totalPrice;
   final DateTime orderTime;
   final DateTime deliveryDate;
+  final Map<String, dynamic> productData;
 
   CartModel({
     required this.orderId,
@@ -23,6 +24,7 @@ class CartModel {
     required this.totalPrice,
     required this.orderTime,
     required this.deliveryDate,
+    required this.productData
   });
 
   factory CartModel.create({
@@ -33,6 +35,7 @@ class CartModel {
     bool isDiscountPercentage = false,
     required DateTime orderTime,
     required DateTime deliveryDate,
+    required Map<String, dynamic> productData,
   }) {
     final String id = generateOrderId();
     final double priceBeforeDiscount =
@@ -52,6 +55,7 @@ class CartModel {
       totalPrice: totalPrice,
       orderTime: orderTime,
       deliveryDate: deliveryDate,
+      productData: productData
     );
   }
 
@@ -65,6 +69,7 @@ class CartModel {
     'total_price': totalPrice,
     'order_time': orderTime.toIso8601String(),
     'delivery_date': deliveryDate.toIso8601String(),
+    'product_data': productData
   };
 
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
@@ -79,5 +84,6 @@ class CartModel {
     totalPrice: (json['total_price'] as num).toDouble(),
     orderTime: DateTime.parse(json['order_time']),
     deliveryDate: DateTime.parse(json['delivery_date']),
+    productData: json['product_data'],
   );
 }
