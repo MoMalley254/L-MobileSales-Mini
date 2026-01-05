@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:l_mobile_sales_mini/core/providers/data_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../core/utils/confirm_delete_util.dart';
 import '../../data/models/auth_model.dart';
+import '../widgets/common/loaders/fullscreen_loader_widget.dart';
 
 final authProviderNotifier = AsyncNotifierProvider<AuthNotifier, AuthModel>(
   AuthNotifier.new
@@ -135,8 +138,18 @@ class AuthNotifier extends AsyncNotifier<AuthModel> {
   }
 
   Future<void> logout() async {
+    bool? hasConfirmed = await confirmDelete(
+      'Logout',
+      'Are you sure you want to logout, this will terminate the current authenticated state?',
+    );
+
+    if (hasConfirmed == null || !hasConfirmed) return;
+
+    showFullScreenLoader('Logging out...');
+    // Future.delayed(const Duration(seconds: 2));
     await _secureStorage.delete(key: 'auth_token');
     state = AsyncData(AuthModel());
     authStateChanges.notifyListeners();
+    SmartDialog.dismiss(force: true);
   }
 }

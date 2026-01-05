@@ -11,12 +11,18 @@ import 'package:l_mobile_sales_mini/presentation/widgets/common/section_title.da
 import '../../../core/navigation/route_names.dart';
 import '../../../core/utils/navigation_utils.dart';
 
-class DrawerWidget extends ConsumerWidget {
+class DrawerWidget extends ConsumerStatefulWidget {
   const DrawerWidget({super.key});
 
+  @override
+  ConsumerState<DrawerWidget> createState() => _DrawerWidgetState();
+}
 
-
-  void handleLogout(BuildContext context) {}
+class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
+  void handleLogout(BuildContext context) {
+    final authNotifier = ref.read(authProviderNotifier.notifier);
+    authNotifier.logout();
+  }
 
   List<Map<String, dynamic>> getNotifications() {
     final Random random = Random();
@@ -40,7 +46,7 @@ class DrawerWidget extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final authProviderAsync = ref.watch(authProviderNotifier);
 
     return authProviderAsync.when(
