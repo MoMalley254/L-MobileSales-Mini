@@ -7,7 +7,9 @@ import 'package:l_mobile_sales_mini/presentation/screens/checkout_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/notifications_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/settings_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/splash_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/drawer_widget.dart';
 
@@ -156,6 +158,16 @@ GoRouter createAppRouter(WidgetRef ref) {
             name: 'Checkout',
             builder: (context, state) => CheckoutScreen(),
           ),
+          GoRoute(
+            path: RouteNames.settingsRoute,
+            name: 'Settings',
+            builder: (context, state) => SettingsScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.notificationsRoute,
+            name: 'Notifications',
+            builder: (context, state) => NotificationsScreen(),
+          )
         ],
       ),
     ],
