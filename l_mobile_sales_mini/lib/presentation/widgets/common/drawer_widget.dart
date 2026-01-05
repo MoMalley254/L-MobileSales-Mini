@@ -8,10 +8,13 @@ import 'package:l_mobile_sales_mini/data/models/user/user_model.dart';
 import 'package:l_mobile_sales_mini/presentation/controllers/auth_provider.dart';
 import 'package:l_mobile_sales_mini/presentation/widgets/common/section_title.dart';
 
+import '../../../core/navigation/route_names.dart';
+import '../../../core/utils/navigation_utils.dart';
+
 class DrawerWidget extends ConsumerWidget {
   const DrawerWidget({super.key});
 
-  void goToSettings(BuildContext context) {}
+
 
   void handleLogout(BuildContext context) {}
 
@@ -212,9 +215,7 @@ class DrawerWidget extends ConsumerWidget {
       children: [
         SectionTitle(title: 'Notifications'),
 
-        buildExpandButton(context, () {
-          print('Expand notifications');
-        }),
+        buildExpandButton(context, () => expandNotifications(context)),
       ],
     );
   }

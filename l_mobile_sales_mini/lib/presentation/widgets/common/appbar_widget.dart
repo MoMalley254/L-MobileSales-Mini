@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:l_mobile_sales_mini/core/navigation/route_names.dart';
+import 'package:l_mobile_sales_mini/core/utils/navigation_utils.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   AppbarWidget({super.key});
@@ -17,10 +18,6 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   bool isInPrimaryScreen(String location) {
     return primaryLocations.contains(location);
-  }
-
-  void showNotifications() {
-    print('Show notifications');
   }
 
   void openMenu(BuildContext context) {
@@ -73,7 +70,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   Widget buildNotifications(BuildContext context) {
     return InkWell(
-      onTap: showNotifications,
+      onTap: () => expandNotifications(context),
       borderRadius: BorderRadius.circular(20),
       child: Stack(
         clipBehavior: Clip.none,
