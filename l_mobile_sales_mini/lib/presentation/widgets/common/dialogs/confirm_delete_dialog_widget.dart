@@ -14,7 +14,7 @@ class ConfirmDeleteDialogWidget extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        // color: Colors.white60,
+        color: Colors.white60,
           borderRadius: BorderRadius.circular(7)
       ),
       child: Column(
@@ -70,11 +70,13 @@ class ConfirmDeleteDialogWidget extends StatelessWidget {
           SmartDialog.dismiss(force: true, result: confirm);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: confirm ? Colors.red[200]! : Colors.green[200]!
+          backgroundColor: confirm ? Colors.red : Colors.green
         ),
         child: Text(
-          confirm ? 'Delete' : 'Cancel',
-          style: TextTheme.of(context).bodyMedium,
+          confirm ? 'Confirm' : 'Cancel',
+          style: TextTheme.of(context).bodyMedium?.copyWith(
+            color: Colors.white
+          ),
         )
     );
   }
