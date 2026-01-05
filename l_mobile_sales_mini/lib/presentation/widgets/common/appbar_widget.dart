@@ -33,10 +33,6 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
    }
   }
 
-  void showProfile() {
-    print('Show profile');
-  }
-
   @override
   Widget build(BuildContext context) {
     final String location = GoRouter.of(context).state.uri.toString();
@@ -111,7 +107,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   Widget buildUserProfileWidget(BuildContext context) {
     return InkWell(
-      onTap: showProfile,
+      onTap: () => goToProfileScreen(context),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
