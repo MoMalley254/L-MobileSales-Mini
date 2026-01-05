@@ -9,6 +9,7 @@ import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/splash_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/widgets/common/drawer_widget.dart';
 
 import '../../data/models/customers/customer_model.dart';
 import '../../data/models/products/product_model.dart';
@@ -73,6 +74,7 @@ GoRouter createAppRouter(WidgetRef ref) {
           }
           return Scaffold(
             appBar: AppbarWidget(),
+            drawer: DrawerWidget(),
             body: child,
             bottomNavigationBar: BottomNavigationWidget(
               currentIndex: currentIndex,

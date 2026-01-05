@@ -23,8 +23,9 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
     print('Show notifications');
   }
 
-  void openMenu() {
-    print('Open menu');
+  void openMenu(BuildContext context) {
+    print('Open drawer');
+    Scaffold.of(context).openDrawer();
   }
 
   void handleBackButtonClick(BuildContext context) {
@@ -62,7 +63,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
     bool isInPrimary = isInPrimaryScreen(location);
     return IconButton(
         onPressed: () {
-          isInPrimary ? openMenu() : handleBackButtonClick(context);
+          isInPrimary ? openMenu(context) : handleBackButtonClick(context);
         },
         icon: Icon(
           isInPrimary ? Icons.menu : Icons.arrow_back
