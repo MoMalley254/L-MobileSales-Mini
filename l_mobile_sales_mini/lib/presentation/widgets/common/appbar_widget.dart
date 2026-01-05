@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:l_mobile_sales_mini/core/navigation/route_names.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const AppbarWidget({super.key});
+  AppbarWidget({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  final List<dynamic> primaryLocations = [
+    RouteNames.dashboardRoute,
+    RouteNames.inventoryRoute,
+    RouteNames.customersRoute,
+    RouteNames.checkoutRoute
+  ];
+
+  bool isInPrimaryScreen(String location) {
+    return primaryLocations.contains(location);
+  }
 
   void showNotifications() {
     print('Show notifications');
@@ -14,16 +27,25 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
     print('Open menu');
   }
 
+  void handleBackButtonClick(BuildContext context) {
+   if (context.canPop()) {
+     GoRouter.maybeOf(context)?.pop();
+   } else {
+     GoRouter.maybeOf(context)?.go(RouteNames.dashboardRoute);
+   }
+  }
+
   void showProfile() {
     print('Show profile');
   }
 
   @override
   Widget build(BuildContext context) {
+    final String location = GoRouter.of(context).state.uri.toString();
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.primary,
       elevation: 0,
-      leading: buildMenuIcon(context),
+      leading: buildMenuIcon(context, location),
       actions: [
         buildNotifications(context),
         const SizedBox(height: 10,),
@@ -36,11 +58,14 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget buildMenuIcon(BuildContext context) {
+  Widget buildMenuIcon(BuildContext context, String location) {
+    bool isInPrimary = isInPrimaryScreen(location);
     return IconButton(
-        onPressed: openMenu,
+        onPressed: () {
+          isInPrimary ? openMenu() : handleBackButtonClick(context);
+        },
         icon: Icon(
-          Icons.menu,
+          isInPrimary ? Icons.menu : Icons.arrow_back
         )
     );
   }
