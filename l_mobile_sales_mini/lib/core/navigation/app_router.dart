@@ -7,6 +7,7 @@ import 'package:l_mobile_sales_mini/presentation/screens/checkout_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/home_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/inventory_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/login_screen.dart';
+import 'package:l_mobile_sales_mini/presentation/screens/new_product_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/notifications_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/product_screen.dart';
 import 'package:l_mobile_sales_mini/presentation/screens/profile_screen.dart';
@@ -173,6 +174,11 @@ GoRouter createAppRouter(WidgetRef ref) {
             path: RouteNames.profileRoute,
             name: 'Profile',
             builder: (context, state) => ProfileScreen(),
+          ),
+          GoRoute(
+            path: RouteNames.newProductRoute,
+            name: 'New Product',
+            builder: (context, state) => NewProductScreen(),
           )
         ],
       ),

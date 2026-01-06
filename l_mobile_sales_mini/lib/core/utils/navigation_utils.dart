@@ -16,3 +16,8 @@ void goToSettings(BuildContext context) {
 void goToProfileScreen(BuildContext context) {
   GoRouter.of(context).push(RouteNames.settingsRoute);
 }
+
+void goToNewProductScreen(BuildContext context) {
+  Scaffold.of(context).closeDrawer();
+  GoRouter.of(context).push(RouteNames.newProductRoute);
+}

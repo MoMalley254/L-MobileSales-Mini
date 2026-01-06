@@ -67,6 +67,8 @@ class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
                   const SizedBox(height: 20),
                   buildUserProfile(context, authData),
                   const SizedBox(height: 10),
+                  buildNewProductButton(context),
+                  const SizedBox(height: 10),
                   buildNotificationsArea(context),
                   const Spacer(),
 
@@ -182,6 +184,36 @@ class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
             TextSpan(text: userData?.department ?? 'Department'),
             TextSpan(text: ' | '),
             TextSpan(text: userData?.role ?? 'Role'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildNewProductButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          elevation: 2,
+        ),
+        onPressed: () => goToNewProductScreen(context),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'New Product',
+              style: TextTheme.of(context).bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(width: 5),
+            Icon(Icons.open_in_new, size: 20),
           ],
         ),
       ),

@@ -87,4 +87,25 @@ class DatabaseService {
 
     await batch.commit(noResult: true);
   }
+
+  Future<bool> insertProduct(Product product) async {
+    try {
+      final db = await database;
+      final data = product.toJson();
+      data['stock'] = DbConverter.encode(data['stock']);
+      data['images'] = DbConverter.encode(data['images']);
+      data['specifications'] = DbConverter.encode(data['specifications']);
+      data['related_products'] = DbConverter.encode(data['related_products']);
+      data['batch_number'] = DbConverter.boolToInt(product.batchNumber);
+      data['serial_number'] = DbConverter.boolToInt(product.serialNumber);
+
+      int result = await db.insert(productsTableName, data, conflictAlgorithm: ConflictAlgorithm.replace);
+      if (result < 1) throw Exception('Unable to insert ${product.name}');
+
+      return true;
+    } catch(e) {
+      print('Insert error $e');
+      return false;
+    }
+  }
 }

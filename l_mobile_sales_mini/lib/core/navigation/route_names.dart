@@ -10,4 +10,6 @@ class RouteNames {
   static const settingsRoute = '/settings';
   static const notificationsRoute = '/notifications';
   static const profileRoute = '/profile';
+  static const newProductRoute = '/new-product';
+
 }
